@@ -1,0 +1,1278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GPU/RAM Calculator for Agent Sessions (vLLM KV-Offloading) — v27</title>
+    <style>/*! tailwindcss v3.4.17 | MIT License | https://tailwindcss.com */*,:after,:before{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgba(59,130,246,.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }::backdrop{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgba(59,130,246,.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }/*! tailwindcss v3.4.17 | MIT License | https://tailwindcss.com*/*,:after,:before{box-sizing:border-box;border:0 solid #e5e7eb}:after,:before{--tw-content:""}:host,html{line-height:1.5;-webkit-text-size-adjust:100%;-moz-tab-size:4;-o-tab-size:4;tab-size:4;font-family:ui-sans-serif,system-ui,sans-serif,Apple Color Emoji,Segoe UI Emoji,Segoe UI Symbol,Noto Color Emoji;font-feature-settings:normal;font-variation-settings:normal;-webkit-tap-highlight-color:transparent}body{margin:0;line-height:inherit}hr{height:0;color:inherit;border-top-width:1px}abbr:where([title]){-webkit-text-decoration:underline dotted;text-decoration:underline dotted}h1,h2,h3,h4,h5,h6{font-size:inherit;font-weight:inherit}a{color:inherit;text-decoration:inherit}b,strong{font-weight:bolder}code,kbd,pre,samp{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,Liberation Mono,Courier New,monospace;font-feature-settings:normal;font-variation-settings:normal;font-size:1em}small{font-size:80%}sub,sup{font-size:75%;line-height:0;position:relative;vertical-align:baseline}sub{bottom:-.25em}sup{top:-.5em}table{text-indent:0;border-color:inherit;border-collapse:collapse}button,input,optgroup,select,textarea{font-family:inherit;font-feature-settings:inherit;font-variation-settings:inherit;font-size:100%;font-weight:inherit;line-height:inherit;letter-spacing:inherit;color:inherit;margin:0;padding:0}button,select{text-transform:none}button,input:where([type=button]),input:where([type=reset]),input:where([type=submit]){-webkit-appearance:button;background-color:transparent;background-image:none}:-moz-focusring{outline:auto}:-moz-ui-invalid{box-shadow:none}progress{vertical-align:baseline}::-webkit-inner-spin-button,::-webkit-outer-spin-button{height:auto}[type=search]{-webkit-appearance:textfield;outline-offset:-2px}::-webkit-search-decoration{-webkit-appearance:none}::-webkit-file-upload-button{-webkit-appearance:button;font:inherit}summary{display:list-item}blockquote,dd,dl,figure,h1,h2,h3,h4,h5,h6,hr,p,pre{margin:0}fieldset{margin:0}fieldset,legend{padding:0}menu,ol,ul{list-style:none;margin:0;padding:0}dialog{padding:0}textarea{resize:vertical}input::-moz-placeholder,textarea::-moz-placeholder{opacity:1;color:#9ca3af}input::placeholder,textarea::placeholder{opacity:1;color:#9ca3af}[role=button],button{cursor:pointer}:disabled{cursor:default}audio,canvas,embed,iframe,img,object,svg,video{display:block;vertical-align:middle}img,video{max-width:100%;height:auto}[hidden]:where(:not([hidden=until-found])){display:none}.container{width:100%}@media (min-width:640px){.container{max-width:640px}}@media (min-width:768px){.container{max-width:768px}}@media (min-width:1024px){.container{max-width:1024px}}@media (min-width:1280px){.container{max-width:1280px}}@media (min-width:1536px){.container{max-width:1536px}}.visible{visibility:visible}.invisible{visibility:hidden}.static{position:static}.fixed{position:fixed}.absolute{position:absolute}.relative{position:relative}.sticky{position:sticky}.bottom-6{bottom:1.5rem}.left-0{left:0}.top-14{top:3.5rem}.top-20{top:5rem}.top-6{top:1.5rem}.z-10{z-index:10}.z-20{z-index:20}.mx-auto{margin-left:auto;margin-right:auto}.mb-1{margin-bottom:.25rem}.mb-2{margin-bottom:.5rem}.ml-1{margin-left:.25rem}.mt-0\.5{margin-top:.125rem}.mt-1{margin-top:.25rem}.mt-2{margin-top:.5rem}.mt-3{margin-top:.75rem}.block{display:block}.flex{display:flex}.table{display:table}.grid{display:grid}.hidden{display:none}.h-2{height:.5rem}.h-4{height:1rem}.h-5{height:1.25rem}.w-24{width:6rem}.w-4{width:1rem}.w-5{width:1.25rem}.w-64{width:16rem}.w-72{width:18rem}.w-full{width:100%}.min-w-0{min-width:0}.max-w-6xl{max-width:72rem}.flex-1{flex:1 1 0%}.shrink-0{flex-shrink:0}.grow{flex-grow:1}.cursor-help{cursor:help}.cursor-pointer{cursor:pointer}.select-none{-webkit-user-select:none;-moz-user-select:none;user-select:none}.appearance-none{-webkit-appearance:none;-moz-appearance:none;appearance:none}.grid-cols-2{grid-template-columns:repeat(2,minmax(0,1fr))}.flex-col{flex-direction:column}.flex-wrap{flex-wrap:wrap}.items-center{align-items:center}.items-baseline{align-items:baseline}.items-stretch{align-items:stretch}.justify-between{justify-content:space-between}.gap-2{gap:.5rem}.gap-3{gap:.75rem}.gap-4{gap:1rem}.gap-8{gap:2rem}.gap-x-8{-moz-column-gap:2rem;column-gap:2rem}.gap-y-2{row-gap:.5rem}.space-y-1>:not([hidden])~:not([hidden]){--tw-space-y-reverse:0;margin-top:calc(.25rem*(1 - var(--tw-space-y-reverse)));margin-bottom:calc(.25rem*var(--tw-space-y-reverse))}.space-y-1\.5>:not([hidden])~:not([hidden]){--tw-space-y-reverse:0;margin-top:calc(.375rem*(1 - var(--tw-space-y-reverse)));margin-bottom:calc(.375rem*var(--tw-space-y-reverse))}.space-y-2>:not([hidden])~:not([hidden]){--tw-space-y-reverse:0;margin-top:calc(.5rem*(1 - var(--tw-space-y-reverse)));margin-bottom:calc(.5rem*var(--tw-space-y-reverse))}.space-y-4>:not([hidden])~:not([hidden]){--tw-space-y-reverse:0;margin-top:calc(1rem*(1 - var(--tw-space-y-reverse)));margin-bottom:calc(1rem*var(--tw-space-y-reverse))}.truncate{overflow:hidden;text-overflow:ellipsis}.truncate,.whitespace-nowrap{white-space:nowrap}.rounded{border-radius:.25rem}.rounded-lg{border-radius:.5rem}.rounded-xl{border-radius:.75rem}.rounded-t-xl{border-top-left-radius:.75rem;border-top-right-radius:.75rem}.border{border-width:1px}.border-2{border-width:2px}.border-b{border-bottom-width:1px}.border-t{border-top-width:1px}.border-amber-100{--tw-border-opacity:1;border-color:rgb(254 243 199/var(--tw-border-opacity,1))}.border-amber-200{--tw-border-opacity:1;border-color:rgb(253 230 138/var(--tw-border-opacity,1))}.border-blue-100{--tw-border-opacity:1;border-color:rgb(219 234 254/var(--tw-border-opacity,1))}.border-emerald-200{--tw-border-opacity:1;border-color:rgb(167 243 208/var(--tw-border-opacity,1))}.border-indigo-100{--tw-border-opacity:1;border-color:rgb(224 231 255/var(--tw-border-opacity,1))}.border-indigo-200{--tw-border-opacity:1;border-color:rgb(199 210 254/var(--tw-border-opacity,1))}.border-purple-100{--tw-border-opacity:1;border-color:rgb(243 232 255/var(--tw-border-opacity,1))}.border-red-200{--tw-border-opacity:1;border-color:rgb(254 202 202/var(--tw-border-opacity,1))}.border-sky-100{--tw-border-opacity:1;border-color:rgb(224 242 254/var(--tw-border-opacity,1))}.border-slate-200{--tw-border-opacity:1;border-color:rgb(226 232 240/var(--tw-border-opacity,1))}.border-slate-300{--tw-border-opacity:1;border-color:rgb(203 213 225/var(--tw-border-opacity,1))}.border-teal-100{--tw-border-opacity:1;border-color:rgb(204 251 241/var(--tw-border-opacity,1))}.bg-amber-50{--tw-bg-opacity:1;background-color:rgb(255 251 235/var(--tw-bg-opacity,1))}.bg-blue-50{--tw-bg-opacity:1;background-color:rgb(239 246 255/var(--tw-bg-opacity,1))}.bg-emerald-100{--tw-bg-opacity:1;background-color:rgb(209 250 229/var(--tw-bg-opacity,1))}.bg-emerald-50{--tw-bg-opacity:1;background-color:rgb(236 253 245/var(--tw-bg-opacity,1))}.bg-emerald-600{--tw-bg-opacity:1;background-color:rgb(5 150 105/var(--tw-bg-opacity,1))}.bg-indigo-50{--tw-bg-opacity:1;background-color:rgb(238 242 255/var(--tw-bg-opacity,1))}.bg-indigo-600{--tw-bg-opacity:1;background-color:rgb(79 70 229/var(--tw-bg-opacity,1))}.bg-purple-50{--tw-bg-opacity:1;background-color:rgb(250 245 255/var(--tw-bg-opacity,1))}.bg-red-100{--tw-bg-opacity:1;background-color:rgb(254 226 226/var(--tw-bg-opacity,1))}.bg-red-50{--tw-bg-opacity:1;background-color:rgb(254 242 242/var(--tw-bg-opacity,1))}.bg-sky-50{--tw-bg-opacity:1;background-color:rgb(240 249 255/var(--tw-bg-opacity,1))}.bg-slate-100{--tw-bg-opacity:1;background-color:rgb(241 245 249/var(--tw-bg-opacity,1))}.bg-slate-200{--tw-bg-opacity:1;background-color:rgb(226 232 240/var(--tw-bg-opacity,1))}.bg-slate-50{--tw-bg-opacity:1;background-color:rgb(248 250 252/var(--tw-bg-opacity,1))}.bg-slate-700{--tw-bg-opacity:1;background-color:rgb(51 65 85/var(--tw-bg-opacity,1))}.bg-slate-800{--tw-bg-opacity:1;background-color:rgb(30 41 59/var(--tw-bg-opacity,1))}.bg-teal-50{--tw-bg-opacity:1;background-color:rgb(240 253 250/var(--tw-bg-opacity,1))}.bg-white{--tw-bg-opacity:1;background-color:rgb(255 255 255/var(--tw-bg-opacity,1))}.p-2{padding:.5rem}.p-3{padding:.75rem}.p-4{padding:1rem}.p-5{padding:1.25rem}.p-6{padding:1.5rem}.px-2{padding-left:.5rem;padding-right:.5rem}.px-3{padding-left:.75rem;padding-right:.75rem}.px-4{padding-left:1rem;padding-right:1rem}.px-6{padding-left:1.5rem;padding-right:1.5rem}.py-0\.5{padding-top:.125rem;padding-bottom:.125rem}.py-1{padding-top:.25rem;padding-bottom:.25rem}.py-1\.5{padding-top:.375rem;padding-bottom:.375rem}.py-2{padding-top:.5rem;padding-bottom:.5rem}.py-2\.5{padding-top:.625rem;padding-bottom:.625rem}.py-3{padding-top:.75rem;padding-bottom:.75rem}.pb-1{padding-bottom:.25rem}.pb-2{padding-bottom:.5rem}.pb-4{padding-bottom:1rem}.pt-1{padding-top:.25rem}.pt-2{padding-top:.5rem}.pt-4{padding-top:1rem}.text-right{text-align:right}.font-mono{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,Liberation Mono,Courier New,monospace}.text-2xl{font-size:1.5rem;line-height:2rem}.text-3xl{font-size:1.875rem;line-height:2.25rem}.text-4xl{font-size:2.25rem;line-height:2.5rem}.text-\[11px\]{font-size:11px}.text-lg{font-size:1.125rem;line-height:1.75rem}.text-sm{font-size:.875rem;line-height:1.25rem}.text-xl{font-size:1.25rem;line-height:1.75rem}.text-xs{font-size:.75rem;line-height:1rem}.font-bold{font-weight:700}.font-extrabold{font-weight:800}.font-medium{font-weight:500}.font-normal{font-weight:400}.font-semibold{font-weight:600}.uppercase{text-transform:uppercase}.leading-relaxed{line-height:1.625}.leading-snug{line-height:1.375}.tracking-wide{letter-spacing:.025em}.tracking-wider{letter-spacing:.05em}.text-amber-300\/90{color:rgba(252,211,77,.9)}.text-amber-600{--tw-text-opacity:1;color:rgb(217 119 6/var(--tw-text-opacity,1))}.text-amber-700{--tw-text-opacity:1;color:rgb(180 83 9/var(--tw-text-opacity,1))}.text-amber-800{--tw-text-opacity:1;color:rgb(146 64 14/var(--tw-text-opacity,1))}.text-amber-900{--tw-text-opacity:1;color:rgb(120 53 15/var(--tw-text-opacity,1))}.text-blue-600{--tw-text-opacity:1;color:rgb(37 99 235/var(--tw-text-opacity,1))}.text-blue-700\/70{color:rgba(29,78,216,.7)}.text-blue-900{--tw-text-opacity:1;color:rgb(30 58 138/var(--tw-text-opacity,1))}.text-emerald-700{--tw-text-opacity:1;color:rgb(4 120 87/var(--tw-text-opacity,1))}.text-emerald-700\/70{color:rgba(4,120,87,.7)}.text-emerald-800{--tw-text-opacity:1;color:rgb(6 95 70/var(--tw-text-opacity,1))}.text-gray-800{--tw-text-opacity:1;color:rgb(31 41 55/var(--tw-text-opacity,1))}.text-green-300{--tw-text-opacity:1;color:rgb(134 239 172/var(--tw-text-opacity,1))}.text-green-400{--tw-text-opacity:1;color:rgb(74 222 128/var(--tw-text-opacity,1))}.text-indigo-600{--tw-text-opacity:1;color:rgb(79 70 229/var(--tw-text-opacity,1))}.text-indigo-900{--tw-text-opacity:1;color:rgb(49 46 129/var(--tw-text-opacity,1))}.text-purple-600{--tw-text-opacity:1;color:rgb(147 51 234/var(--tw-text-opacity,1))}.text-purple-900{--tw-text-opacity:1;color:rgb(88 28 135/var(--tw-text-opacity,1))}.text-red-600{--tw-text-opacity:1;color:rgb(220 38 38/var(--tw-text-opacity,1))}.text-red-800{--tw-text-opacity:1;color:rgb(153 27 27/var(--tw-text-opacity,1))}.text-sky-300\/90{color:rgba(125,211,252,.9)}.text-sky-600{--tw-text-opacity:1;color:rgb(2 132 199/var(--tw-text-opacity,1))}.text-sky-900{--tw-text-opacity:1;color:rgb(12 74 110/var(--tw-text-opacity,1))}.text-slate-300{--tw-text-opacity:1;color:rgb(203 213 225/var(--tw-text-opacity,1))}.text-slate-400{--tw-text-opacity:1;color:rgb(148 163 184/var(--tw-text-opacity,1))}.text-slate-500{--tw-text-opacity:1;color:rgb(100 116 139/var(--tw-text-opacity,1))}.text-slate-600{--tw-text-opacity:1;color:rgb(71 85 105/var(--tw-text-opacity,1))}.text-slate-700{--tw-text-opacity:1;color:rgb(51 65 85/var(--tw-text-opacity,1))}.text-slate-800{--tw-text-opacity:1;color:rgb(30 41 59/var(--tw-text-opacity,1))}.text-teal-600{--tw-text-opacity:1;color:rgb(13 148 136/var(--tw-text-opacity,1))}.text-teal-700\/70{color:rgba(15,118,110,.7)}.text-teal-900{--tw-text-opacity:1;color:rgb(19 78 74/var(--tw-text-opacity,1))}.text-white{--tw-text-opacity:1;color:rgb(255 255 255/var(--tw-text-opacity,1))}.underline{text-decoration-line:underline}.accent-emerald-600{accent-color:#059669}.accent-slate-600{accent-color:#475569}.opacity-0{opacity:0}.shadow-inner{--tw-shadow:inset 0 2px 4px 0 rgba(0,0,0,.05);--tw-shadow-colored:inset 0 2px 4px 0 var(--tw-shadow-color)}.shadow-inner,.shadow-lg{box-shadow:var(--tw-ring-offset-shadow,0 0 #0000),var(--tw-ring-shadow,0 0 #0000),var(--tw-shadow)}.shadow-lg{--tw-shadow:0 10px 15px -3px rgba(0,0,0,.1),0 4px 6px -4px rgba(0,0,0,.1);--tw-shadow-colored:0 10px 15px -3px var(--tw-shadow-color),0 4px 6px -4px var(--tw-shadow-color)}.ring-2{--tw-ring-offset-shadow:var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);--tw-ring-shadow:var(--tw-ring-inset) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color);box-shadow:var(--tw-ring-offset-shadow),var(--tw-ring-shadow),var(--tw-shadow,0 0 #0000)}.ring-red-400{--tw-ring-opacity:1;--tw-ring-color:rgb(248 113 113/var(--tw-ring-opacity,1))}.transition{transition-property:color,background-color,border-color,text-decoration-color,fill,stroke,opacity,box-shadow,transform,filter,-webkit-backdrop-filter;transition-property:color,background-color,border-color,text-decoration-color,fill,stroke,opacity,box-shadow,transform,filter,backdrop-filter;transition-property:color,background-color,border-color,text-decoration-color,fill,stroke,opacity,box-shadow,transform,filter,backdrop-filter,-webkit-backdrop-filter;transition-timing-function:cubic-bezier(.4,0,.2,1);transition-duration:.15s}.transition-opacity{transition-property:opacity;transition-timing-function:cubic-bezier(.4,0,.2,1);transition-duration:.15s}.duration-200{transition-duration:.2s}.hover\:bg-emerald-700:hover{--tw-bg-opacity:1;background-color:rgb(4 120 87/var(--tw-bg-opacity,1))}.hover\:bg-indigo-700:hover{--tw-bg-opacity:1;background-color:rgb(67 56 202/var(--tw-bg-opacity,1))}.hover\:bg-slate-800:hover{--tw-bg-opacity:1;background-color:rgb(30 41 59/var(--tw-bg-opacity,1))}.hover\:text-red-600:hover{--tw-text-opacity:1;color:rgb(220 38 38/var(--tw-text-opacity,1))}.focus\:outline-none:focus{outline:2px solid transparent;outline-offset:2px}.focus\:ring-1:focus{--tw-ring-offset-shadow:var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);--tw-ring-shadow:var(--tw-ring-inset) 0 0 0 calc(1px + var(--tw-ring-offset-width)) var(--tw-ring-color);box-shadow:var(--tw-ring-offset-shadow),var(--tw-ring-shadow),var(--tw-shadow,0 0 #0000)}.focus\:ring-slate-500:focus{--tw-ring-opacity:1;--tw-ring-color:rgb(100 116 139/var(--tw-ring-opacity,1))}@media (min-width:640px){.sm\:flex-row{flex-direction:row}}@media (min-width:768px){.md\:w-5\/12{width:41.666667%}.md\:w-7\/12{width:58.333333%}.md\:flex-row{flex-direction:row}.md\:p-10{padding:2.5rem}}</style>
+    <style>
+        body { font-family: system-ui, -apple-system, sans-serif; background-color: #f3f4f6; }
+        .tooltip:hover .tooltip-text { visibility: visible; opacity: 1; }
+        input[type="number"]::-webkit-outer-spin-button,
+        input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+        input[type="number"] { -moz-appearance: textfield; }
+    </style>
+</head>
+<body class="p-4 md:p-10 text-gray-800">
+    <div class="max-w-6xl mx-auto bg-white rounded-xl shadow-lg">
+        <div class="bg-slate-800 text-white p-6 rounded-t-xl">
+            <h1 class="text-2xl font-bold">GPU / RAM Calculator for Agent Sessions — v27</h1>
+            <p class="text-slate-300 mt-2 text-sm">The offload switch picks the mode: with OffloadingConnector (KV write-through to RAM) or resident (all sessions hold VRAM). vLLM has no TTL — both pools are managed by capacity + LRU, so “staleness rate” is computed here (capacity / inflow), and the RAM pool size is the knob, which becomes a fourth concurrency limit alongside VRAM slots, the PCIe bus and prefill-compute. Context is entered as the full value; the unique part = context − shared prefix, subtracted automatically.</p>
+        </div>
+
+        <div class="px-6 pt-4 pb-1">
+            <div class="flex flex-col sm:flex-row gap-2 items-stretch">
+                <input id="share-box" type="text" spellcheck="false"
+                       class="flex-1 min-w-0 font-mono text-[11px] border border-slate-300 rounded px-2 py-1.5 bg-slate-50 focus:outline-none focus:ring-1 focus:ring-slate-500"
+                       placeholder="Paste the scenario link or string here and press “Apply”">
+                <div class="flex gap-2 shrink-0">
+                    <button id="share-copy" class="px-3 py-1.5 text-sm rounded bg-slate-700 text-white hover:bg-slate-800 transition">Copy</button>
+                    <button id="share-apply" class="px-3 py-1.5 text-sm rounded bg-emerald-600 text-white hover:bg-emerald-700 transition">Apply</button>
+                    <button id="basket-add" class="px-3 py-1.5 text-sm rounded bg-indigo-600 text-white hover:bg-indigo-700 transition whitespace-nowrap">+ add to estimate</button>
+                </div>
+            </div>
+            <div class="text-[11px] text-slate-500 mt-1" id="share-hint">This always holds the current scenario in full — copy it to share or save into a task. On the way back in, it accepts either a full link or just the one line after the hash sign.</div>
+        </div>
+        <div class="flex flex-col md:flex-row p-6 gap-8">
+            <div class="w-full md:w-5/12 space-y-4" id="inputs-container">
+            </div>
+
+            <div class="w-full md:w-7/12 space-y-4">
+                <h2 class="text-lg font-semibold border-b pb-2 flex items-center justify-between">
+                    <span>Results</span>
+                    <span class="text-xs font-medium px-2 py-1 rounded" id="mode-badge"></span>
+                </h2>
+
+                <div id="warnings" class="space-y-2"></div>
+
+                <div class="text-xs font-semibold uppercase tracking-wider text-slate-400 pt-1">One replica (TP × GPU)</div>
+                <div class="grid grid-cols-2 gap-3">
+                    <div class="bg-blue-50 p-3 rounded-lg border border-blue-100 tooltip relative">
+                        <div class="text-xs text-blue-600 font-medium">Unique KV per session</div>
+                        <div class="text-xl font-bold text-blue-900 font-mono" id="res-kv">—</div>
+                        <div class="text-[11px] text-blue-700/70 mt-0.5" id="res-ctx-profile"></div>
+                        <div class="tooltip-text invisible opacity-0 absolute left-0 top-14 z-10 w-64 p-2 bg-slate-800 text-white text-xs rounded shadow-lg transition-opacity duration-200">Unique AVERAGE context &times; KiB/token — loaded over PCIe on swap-in and multiplied by N in the RAM pool (memory holds the sum of sessions, and that sum concentrates around the average). The shared prefix is stored once in VRAM and is not swapped.</div>
+                    </div>
+                    <div class="bg-blue-50 p-3 rounded-lg border border-blue-100 tooltip relative">
+                        <div class="text-xs text-blue-600 font-medium">Slots in VRAM (M)</div>
+                        <div class="text-xl font-bold text-blue-900 font-mono" id="res-slots">—</div>
+                        <div class="tooltip-text invisible opacity-0 absolute left-0 top-14 z-10 w-64 p-2 bg-slate-800 text-white text-xs rounded shadow-lg transition-opacity duration-200">floor((TP&middot;VRAM &minus; weights &minus; K&middot;prefix) / (unique KV &times; memory headroom)) — VRAM capacity in sessions, using the same probabilistic headroom as the RAM pool. SLA does NOT cap memory — it limits the DECODING batch (see the warning and summary); the decode batch is SMALLER than M.</div>
+                    </div>
+                    <div class="bg-indigo-50 p-3 rounded-lg border border-indigo-100 tooltip relative">
+                        <div class="text-xs text-indigo-600 font-medium">Decode per session</div>
+                        <div class="text-xl font-bold text-indigo-900 font-mono" id="res-tok">—</div>
+                        <div class="tooltip-text invisible opacity-0 absolute left-0 top-14 z-10 w-64 p-2 bg-slate-800 text-white text-xs rounded shadow-lg transition-opacity duration-200">Memory-bound: weights (once per batch; MoE touches almost all experts at a full batch) + the read fraction of KV — the prefix and the unique KV of each DECODING session (self-consistent batch b = X&middot;t_gen; sessions waiting on tool calls don’t read KV) — divided by the replica’s total HBM. The pass is FURTHER stretched by prefill occupying compute (attention — always; matmul — on the compute branch), so the shown value can be lower than pure memory-read speed. Cascade prefix deduplication is not built in (if it actually kicks in, that is extra headroom). At MTP &gt; 1 the perceived speed is shown. SLA is a LOWER bound: if the batch is small for other reasons, actual speed is above SLA.</div>
+                    </div>
+                    <div class="bg-indigo-50 p-3 rounded-lg border border-indigo-100 tooltip relative">
+                        <div class="text-xs text-indigo-600 font-medium">Time per GPU step (t_slot)</div>
+                        <div class="text-xl font-bold text-indigo-900 font-mono" id="res-slot-time">—</div>
+                        <div class="tooltip-text invisible opacity-0 absolute left-0 top-14 z-10 w-64 p-2 bg-slate-800 text-white text-xs rounded shadow-lg transition-opacity duration-200">Offload: swap-in + delta prefill + generation. Resident mode: delta prefill + generation. Plus, in both modes — the amortized initial task prefill (uniq_start/S). This is how long a session occupies a VRAM slot for one step.</div>
+                    </div>
+                    <div class="bg-purple-50 p-3 rounded-lg border border-purple-100 tooltip relative">
+                        <div class="text-xs text-purple-600 font-medium">Swap-in over PCIe</div>
+                        <div class="text-xl font-bold text-purple-900 font-mono" id="res-swapin">—</div>
+                        <div class="tooltip-text invisible opacity-0 absolute left-0 top-14 z-10 w-64 p-2 bg-slate-800 text-white text-xs rounded shadow-lg transition-opacity duration-200">Loading the session’s entire KV from RAM into VRAM. The worst case is confirmed by the KV lifetime in VRAM: if it’s shorter than the tool wait, the blocks are already evicted by the time it returns.</div>
+                    </div>
+                    <div class="bg-purple-50 p-3 rounded-lg border border-purple-100 tooltip relative">
+                        <div class="text-xs text-purple-600 font-medium">PCIe load</div>
+                        <div class="text-xl font-bold text-purple-900 font-mono" id="res-pcie-util">—</div>
+                        <div class="tooltip-text invisible opacity-0 absolute left-0 top-14 z-10 w-64 p-2 bg-slate-800 text-white text-xs rounded shadow-lg transition-opacity duration-200">Actual traffic of all sessions: from RAM — the full KV per step (dominant), into RAM — only new bytes (delta + initial prefills). Directions are summed against one direction’s bandwidth — conservative, since the bus is duplex.</div>
+                    </div>
+                    <div class="bg-purple-50 p-3 rounded-lg border border-purple-100 tooltip relative">
+                        <div class="text-xs text-purple-600 font-medium">Oversubscription</div>
+                        <div class="text-xl font-bold text-purple-900 font-mono" id="res-ratio">—</div>
+                        <div class="tooltip-text invisible opacity-0 absolute left-0 top-14 z-10 w-64 p-2 bg-slate-800 text-white text-xs rounded shadow-lg transition-opacity duration-200">N / M. In resident mode &le; 1.0&times; (the prefill flow can keep N below M too); you can’t fit more than M sessions per GPU without offload or recompute.</div>
+                    </div>
+                    <div class="bg-teal-50 p-3 rounded-lg border border-teal-100 tooltip relative">
+                        <div class="text-xs text-teal-600 font-medium">Prefill ceiling at this context</div>
+                        <div class="text-xl font-bold text-teal-900 font-mono" id="res-pref-ceil">—</div>
+                        <div class="text-[11px] text-teal-700/70 mt-0.5" id="res-pref-split"></div>
+                        <div class="tooltip-text invisible opacity-0 absolute left-0 top-14 z-10 w-72 p-2 bg-slate-800 text-white text-xs rounded shadow-lg transition-opacity duration-200">The GPU’s peak &times; MFU, divided by the work of one token: 2 &middot; active parameters + 2 &middot; full-attention layers &middot; hidden_size &middot; context length &middot; f. The second term grows with context — so the ceiling DROPS as the prompt gets longer, and you can’t set one number for all lengths.</div>
+                    </div>
+                    <div class="bg-amber-50 p-3 rounded-lg border border-amber-100 tooltip relative">
+                        <div class="text-xs text-amber-600 font-medium">Miss = recompute</div>
+                        <div class="text-xl font-bold text-amber-900 font-mono" id="res-recompute">—</div>
+                        <div class="tooltip-text invisible opacity-0 absolute left-0 top-14 z-10 w-64 p-2 bg-slate-800 text-white text-xs rounded shadow-lg transition-opacity duration-200">The cost of losing KV: re-prefill of the unique part + the delta (the prefix stays cached — all sessions keep it hot). It eats into the GPU’s overall prefill-compute, not just the slot.</div>
+                    </div>
+                    <div class="bg-sky-50 p-3 rounded-lg border border-sky-100 tooltip relative">
+                        <div class="text-xs text-sky-600 font-medium">KV lifetime in VRAM</div>
+                        <div class="text-xl font-bold text-sky-900 font-mono" id="res-life-vram">—</div>
+                        <div class="tooltip-text invisible opacity-0 absolute left-0 top-14 z-10 w-72 p-2 bg-slate-800 text-white text-xs rounded shadow-lg transition-opacity duration-200">LRU: free VRAM / inflow (loads + computed blocks). Shorter than the tool wait — the blocks are evicted from the GPU by the time it returns, so swap-in is full (built into the model). Longer — GPU hits dominate, offload is barely loaded.</div>
+                    </div>
+                    <div class="bg-sky-50 p-3 rounded-lg border border-sky-100 tooltip relative">
+                        <div class="text-xs text-sky-600 font-medium">KV lifetime in the RAM pool</div>
+                        <div class="text-xl font-bold text-sky-900 font-mono" id="res-life-ram">—</div>
+                        <div class="tooltip-text invisible opacity-0 absolute left-0 top-14 z-10 w-72 p-2 bg-slate-800 text-white text-xs rounded shadow-lg transition-opacity duration-200">RAM pool / inflow of new bytes (step delta + initial prefills). A live session refreshes the LRU position of all its blocks every cycle, so this must be &ge; the cycle; the survival guarantee is pool &ge; the working set N&middot;KV, which is already accounted for by the N limit.</div>
+                    </div>
+                </div>
+
+                <div class="bg-slate-50 border border-slate-200 rounded-lg p-4">
+                    <div class="text-xs font-semibold uppercase tracking-wider text-slate-500">Session return to the GPU after a tool call — step cost by outcome</div>
+                    <div class="mt-2 space-y-1.5 text-sm">
+                        <div class="flex justify-between items-baseline gap-4">
+                            <span class="text-slate-600">GPU prefix-cache hit <span class="text-slate-400">(blocks not evicted — only realistic at N &le; M)</span></span>
+                            <span class="font-mono font-semibold text-slate-800 shrink-0" id="cmp-gpu">—</span>
+                        </div>
+                        <div class="flex justify-between items-baseline gap-4">
+                            <span class="text-emerald-700 font-medium">CPU pool hit — offload <span class="text-slate-400 font-normal" id="cmp-ram-label">(this is what the calculator computes)</span></span>
+                            <span class="font-mono font-semibold text-emerald-700 shrink-0" id="cmp-ram">—</span>
+                        </div>
+                        <div class="flex justify-between items-baseline gap-4">
+                            <span class="text-amber-700">Miss &rarr; re-prefill of the unique part</span>
+                            <span class="font-mono font-semibold text-amber-700 shrink-0" id="cmp-miss">—</span>
+                        </div>
+                    </div>
+                    <p class="text-xs text-slate-400 mt-2 leading-relaxed">Offload doesn’t remove the delta prefill — the KV for tool-result tokens doesn’t exist anywhere, it can only be computed. What it replaces is the re-prefill of the unique part of the old context with a PCIe load; the shared prefix is never lost, in any outcome.<span id="cmp-foot-dyn" class="text-slate-500"></span></p>
+                </div>
+
+                <div class="grid grid-cols-2 gap-3">
+                    <div class="bg-emerald-50 p-4 rounded-lg border border-emerald-200">
+                        <div class="text-xs text-emerald-700 font-medium uppercase tracking-wide">Agents per replica (N)</div>
+                        <div class="text-3xl font-extrabold text-emerald-800 font-mono" id="res-agents-gpu">—</div>
+                        <div class="text-xs text-emerald-700/70 mt-1" id="res-agents-note"></div>
+                    </div>
+                    <div class="bg-emerald-50 p-4 rounded-lg border border-emerald-200 tooltip relative">
+                        <div class="text-xs text-emerald-700 font-medium uppercase tracking-wide">RAM for KV per replica</div>
+                        <div class="text-3xl font-extrabold text-emerald-800 font-mono" id="res-ram-gpu">—</div>
+                        <div class="text-xs text-emerald-700/70 mt-1" id="res-ram-note"></div>
+                        <div class="tooltip-text invisible opacity-0 absolute left-0 top-20 z-10 w-72 p-2 bg-slate-800 text-white text-xs rounded shadow-lg transition-opacity duration-200">Working set N &times; KV &times; headroom (a configurable multiplier: spikes, in-flight completed tasks, tail blocks) + prefix. This is the value for cpu_bytes_to_use (bytes per vLLM instance, split across workers). In resident mode the RAM pool isn’t needed.</div>
+                    </div>
+                </div>
+
+                <div class="bg-slate-800 p-5 rounded-lg text-white shadow-inner">
+                    <div class="text-sm text-slate-300 font-medium uppercase tracking-wider">Cluster for the target load</div>
+                    <div class="flex flex-wrap items-baseline gap-x-8 gap-y-2 mt-2">
+                        <div>
+                            <span class="text-4xl font-extrabold text-green-400 font-mono" id="res-gpus">—</span>
+                            <span class="text-slate-300 text-sm ml-1">GPU</span>
+                        </div>
+                        <div>
+                            <span class="text-2xl font-bold text-green-300 font-mono" id="res-ram-total">—</span>
+                            <span class="text-slate-400 text-sm ml-1">Total RAM</span>
+                        </div>
+                        <div>
+                            <span class="text-2xl font-bold text-green-300 font-mono" id="res-vram-total">—</span>
+                            <span class="text-slate-400 text-sm ml-1">Total VRAM</span>
+                        </div>
+                        <div>
+                            <span class="text-2xl font-bold text-green-300 font-mono" id="res-cluster-tps">—</span>
+                            <span class="text-slate-400 text-sm ml-1">cluster tok/s</span>
+                        </div>
+                        <div>
+                            <span class="text-2xl font-bold text-green-300 font-mono" id="res-steps-day">—</span>
+                            <span class="text-slate-400 text-sm ml-1">steps/day</span>
+                        </div>
+                        <div>
+                            <span class="text-2xl font-bold text-green-300 font-mono" id="res-nodes">—</span>
+                            <span class="text-slate-400 text-sm ml-1">nodes</span>
+                        </div>
+                    </div>
+                    <div class="text-xs text-slate-400 mt-3" id="res-cluster-note"></div>
+                    <div class="text-xs text-amber-300/90 mt-1" id="res-alt"></div>
+                    <div class="text-xs text-sky-300/90 mt-1" id="res-ram-ladder"></div>
+                </div>
+
+                <div id="basket-wrap" class="hidden bg-white border-2 border-indigo-200 rounded-lg p-4">
+                    <div class="flex items-center justify-between mb-2">
+                        <div class="text-sm font-semibold text-indigo-900">Estimate: mixed load</div>
+                        <button id="basket-clear" class="text-xs text-slate-500 hover:text-red-600 underline">clear</button>
+                    </div>
+                    <div id="basket-rows" class="text-xs space-y-1"></div>
+                    <div id="basket-total" class="mt-2 pt-2 border-t border-indigo-200 text-sm font-semibold text-indigo-900"></div>
+                    <p class="text-[11px] text-slate-500 mt-2 leading-snug">Mixed load is computed by SUMMING classes, not by averaging their parameters. This isn’t a simplification but an exact result: as long as the classes are bound by the same resource, the replica’s total capacity equals the weighted sum of the demands, and a separate calculation gives exactly the same number. Averaging the inputs instead (one “average” context, one “average” wait) is off by up to 70%, because per-agent demand is nonlinear in these fields. Workflow: pick a class, set its number of agents, press “+ add to estimate”, repeat for the next one.</p>
+                </div>
+                <p class="text-xs text-slate-400 leading-relaxed">The decode batch is self-consistent: only sessions in the generation phase read KV (b = X&middot;t_gen, an iteration), not all residents — the previous assumption “the batch is always full” underestimated procurement when bound by prefill. Built in conservatively: a full KV reload on every step, both PCIe directions counted against one direction’s bandwidth, prefill double-counted in both slot occupancy and the overall ceiling, K copies of the prefix in both pools. Prefill&harr;decode interference is NOT accounted for (prefill chunks steal bandwidth from generation) — the only safeguard is the allowed utilization &lt; 100%. Failure reserve is the “+1 node” checkbox (included in the procurement header).</p>
+
+                <details class="bg-white border border-slate-200 rounded-lg">
+                    <summary class="cursor-pointer px-4 py-3 text-sm font-semibold text-slate-700 select-none">How this is computed — model description</summary>
+                    <div class="px-4 pb-4 text-xs text-slate-600 leading-relaxed space-y-2">
+                        <p><b>The question the program answers:</b> how many GPUs and how much RAM are needed to hold a target number of live agent sessions on on-prem vLLM. A live session is a harness-level metric: an agent cycle in flight, including the tool-wait phase. A vLLM request exists only during the active part of the step; physically, at most M sessions are on the GPU at once, the rest are blocks in the CPU pool at that moment. If the business target is given in steps/day rather than live agents, recompute: live agents ≈ (steps/day ÷ 86,400) × cycle duration T — a faster decode makes the cycle shorter, so fewer live agents are needed for the same work.</p>
+                        <p><b>Context semantics.</b> The full session context and the shared prefix are entered; the unique part = context &minus; prefix, subtracted automatically. The prefix is the byte-identical head of the prompt across all sessions in the batch: APC stores its KV in VRAM once, LRU touches from all sessions keep it hot, it is not swapped and not re-prefilled. The unique part is what scales with the number of sessions: only it occupies slots, travels over PCIe, and lives in the RAM pool.</p>
+                        <p><b>Step lifecycle in vLLM terms.</b> A request is prefilled and decoded up to the tool call, then completes; its blocks stay in the GPU prefix cache. While the tool runs, the request doesn’t exist — the session lives in the harness, and with OffloadingConnector enabled its blocks are write-through copied into the CPU pool. The new request with the tool result appended finds the longest cached prefix, and there are three outcomes: a GPU hit (blocks not evicted — only delta prefill), a RAM hit (loading the unique part over PCIe + delta prefill), a miss (re-prefill of the unique part; the shared prefix is kept in cache by the other sessions).</p>
+                        <p><b>Formula chain.</b> KV: kv_u = uniq &middot; KiB/token, kv_s = prefix &middot; KiB/token. Slots: M = ⌊(TP&middot;VRAM &minus; weights &minus; K&middot;kv_s) / kv_u⌋, where K is the number of DIFFERENT prefixes coexisting on the replica (each stored as a copy). Decode (memory-bound): t_tok = (weights + f&middot;b&middot;(kv_s + kv_u)) &middot; 1.074 / (TP&middot;HBM), where b is the SELF-CONSISTENT decode batch: b = X&middot;t_gen, solved by iteration, because only sessions in the generation phase read KV, not all slot residents (a full batch M when bound by prefill UNDERESTIMATED procurement: slower decode lengthened the cycle and inflated N per replica); 1.074 converts GiB to decimal GB; f is the fraction of KV read by attention (1.0 for dense/GQA/MLA; lower for sparse — GLM-5.2 DSA, V4 Flash CSA/HCA; storage and swap are always full). Every decoding session reads the shared prefix — cascade deduplication is deliberately not built in, see “Modes”. Weight bytes are read in full: MoE touches almost all experts at a full batch, “active parameters” only apply in prefill. MTP/speculative decoding is given as a multiplier (accepted tokens per pass, already net of rejected ones): t_gen = out &middot; t_tok / MTP, the SLA read budget is multiplied by MTP; prefill and the KV/PCIe/RAM volumes don’t change. GPU step: t_slot = swap_in (kv_u/PCIe) + delta prefill (at the append-token price) + amortized initial task prefill (uniq_start/S at the from-scratch price) + t_gen; the full cycle T = t_slot + tool wait. Step throughput X is the minimum of three ceilings: slots min(M_mem/t_slot, M_sla/t_gen) — VRAM holds M_mem residents, SLA only caps decoding ones; PCIe / bytes per step (loading kv_u + writing new blocks + amortized start kv_u/S); the replica’s prefill ceiling (GPU tok/s &times; TP) / tokens per step (delta + uniq/S + m&middot;uniq, where m is the cache-miss fraction: every miss = re-prefill of the unique part) — prefill is a shared compute resource, not a per-slot one. The prefill and PCIe ceilings are multiplied by the target utilization ρ: sizing at 100% is the point of unbounded queue growth, headroom is mandatory. Each input feeds exactly one phase: prefill tok/s — only the prefill terms (t_pref, the flow ceiling, the recompute cost); f — only decode reads (t_tok, the SLA budget); PCIe — only swap; there are no formula links between them, sparse attention enters decode explicitly through f, and enters prefill implicitly, inside the entered tok/s. Concurrency via Little’s law: N = X &middot; T, with a fourth limit N &le; (replica pool &minus; K&middot;kv_s)/(kv_u &middot; headroom), where the replica pool = node RAM ÷ replicas-per-node, and headroom is a configurable multiplier (in-flight completed tasks, start bursts, tail blocks). The actual flow Xserv = N/T feeds every derived metric (PCIe utilization, tok/s, inflows). RAM per replica = N &middot; kv_u &middot; headroom + K&middot;kv_s — this is the cpu_bytes_to_use value; RAM procurement is counted in nodes. Replicas = max(⌈target / ⌊capacity⌋⌉, ⌈required step flow / X_max⌉) — memory (“how much fits”) and throughput (“how much it delivers”) are TWO independent procurement conditions, the larger one binds; capacity is taken as a WHOLE number (a fractional one hid a deficit of up to 1&ndash;2% when the target is a multiple of a near-whole capacity), and X_max comes from the self-consistent unbounded equilibrium under actual swap, or from the resident ceiling without it, so it doesn’t depend on the RAM pool size. GPU = replicas &times; TP; at TP &gt; 1 the weights, prefix and KV are sharded across the replica’s GPUs, and their HBM and PCIe add up (ideal scaling, allreduce overhead not accounted for). If an SLA tok/s is set, the decoding batch is capped by inverting the SAME pass equation used to compute speed (both roofline branches — reads and compute, accounting for compute occupied by prefill); the cut is continuous, capacity rounding happens only at the output. SLA is a lower bound: a batch that’s small for other reasons gives speed ABOVE SLA. N = max(resident capacity, min(flow, RAM pool)) — an empty CPU pool doesn’t push N below resident mode (see “Modes”); when the flow doesn’t feed residents, free VRAM stays available for waiting sessions’ blocks.</p>
+                        <p><b>Nodes and TP limits.</b> Tensor parallel lives inside an NVLink/NVSwitch domain (HGX H100/H200 = 8 GPUs, NVL72 = 72). Cross-node TP is technically possible (NCCL over IB/RoCE), but 2&middot;L allreduce per token over the network cuts decode by 30&ndash;50% with per-card efficiency dropping roughly by half — this strategy is dominated by TP=domain &times; PP (one activation transfer at the stage boundary instead of 2&middot;L allreduce) or EP for MoE; the model doesn’t account for them, so TP &gt; domain is flagged as outside the model. Procurement is done in whole nodes: replicas per node = ⌊node/TP⌋, nodes = ⌈replicas / replicas-per-node⌉; a TP that doesn’t divide the node evenly leaves idle GPUs — they’re shown separately. GPU(TP) is non-monotonic: the replica pool = TP&middot;VRAM &minus; weights — a difference near the fit threshold, where the added GPU goes entirely into the pool and multiplies M; the calculator does NOT sweep neighboring TP values — it warns near the fit threshold, so check the minimum GPU count manually at TP&plusmn;1. Beyond the domain, scaling is by replicas through load balancing, mandatorily sticky per session; EP and PP over the network aren’t accounted for by the model.</p>
+                        <p><b>Cache staleness.</b> vLLM has no TTL: both pools are managed by capacity + LRU, so block lifetime is computed as capacity / inflow of new bytes. In VRAM the inflow = loads + computed blocks; in RAM — only new bytes (delta + task starts), hits refresh LRU without writing. If the VRAM lifetime is shorter than the tool wait — the blocks are already evicted by the time it returns, so swap-in is treated as full. The survival guarantee in RAM is the working-set limit (N &middot; kv_u must fit in the pool), which is already built into N.</p>
+                        <p><b>Modes.</b> Offload off — resident mode: N = resident capacity (min of M and the prefill flow), PCIe and the RAM pool aren’t used, every session holds VRAM through the tool wait. Resident capacity also serves as the FLOOR of offload mode: an empty CPU pool doesn’t push N below it — vLLM doesn’t evict GPU blocks for the sake of an empty pool, offload only adds on top. When there’s no actual swap (the pool adds nothing beyond resident capacity, or N &le; M), procurement and the flow ceiling are also computed along the resident line — turning the offload checkbox on can’t make the numbers worse than off. Cascade attention (reading the shared prefix once for the whole decode batch) is NOT built into the model — the conservative case “each session reads the prefix on its own” is always assumed. Reason: in vLLM V1 the cascade is enabled by a fragile heuristic (prefix &ge; 256 tokens, &ge; 8 requests, a perf check) and requires a SINGLE prefix across the whole batch — a multi-agent mix of manifests on a replica breaks the condition, and with a short prefix its contribution is &lt; 1% of decode time. If the cascade actually kicks in on the test bench — that’s extra speed headroom beyond the calculation (at a ~30k-token prefix — up to ~20% of decode). The recompute variant (eviction without offload) is shown for reference in the bottom row of the cluster block.</p>
+                        <p><b>How to get the read fraction f.</b> A priori: for select-at-read architectures (DSA — the full KV is stored, selection happens at read time) f(L) ≈ (top_k + window)/L + b_indexer/b_kv; top_k and window are in config.json and the model’s tech report; f drops as context grows and has a floor due to the indexer scan. For compressed-storage (V4 Flash CSA/HCA) the compression is already baked into KiB/token and most of what’s stored gets read — f is closer to 1; models are fairly compared by the product KiB/token &times; f, since that’s what actually eats bandwidth. A posteriori (the decisive method, which also calibrates effective HBM): two measurements at a full batch with MTP off — a short context gives bandwidth BW = weights / (TP &middot; t_tok), a long one gives f = (t_tok &middot; TP &middot; BW − weights) / (M &middot; kv_session).</p>
+                        <p><b>Conservatism and test-bench verification.</b> Built in: a full reload on every step, both PCIe directions counted against one direction’s bandwidth, prefill counted twice — into both slot occupancy and the overall ceiling. Measure on the test bench: prefill tok/s (vllm bench serve), the effective PCIe DMA bandwidth, whether cascade attention actually kicks in (not built into the calculation — its actual occurrence gives extra decode speed headroom). Check on your vLLM version whether blocks formed DURING DECODE get offloaded (issue #33864: in some versions such blocks didn’t make it into the CPU pool — on return, the tail of output tokens went into re-prefill). CPU pool size is set by cpu_bytes_to_use (bytes per instance, split across TP workers; num_cpu_blocks in older versions). Check max_num_seqs and max_num_batched_tokens: the vLLM scheduler can cap the batch before memory does — the model doesn’t know about this ceiling (an indirect signal is the warning about degraded per-session speed). Real numbers are usually 10&ndash;30% better than the calculated ones.</p>
+                    </div>
+                </details>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const sections = [
+            { title: 'Load', ids: ['targetAgents', 'targetSteps', 'ctxTokens', 'sharedTokens', 'prefixKinds', 'outTokens', 'toolTokens', 'taskSteps', 'waitTime', 'missPct', 'slaTok'] },
+            { title: 'Model', ids: ['kvKiB', 'stateMiB', 'stateAllocMiB', 'weights', 'actParams', 'attnLayers', 'dQ', 'prefTps', 'attnFrac', 'topK', 'idxWidth', 'mtpMult'] },
+            { title: 'Platform', ids: ['vram', 'peakTflops', 'hbm', 'pcie', 'tp', 'nodeSize', 'utilPct'] },
+        ];
+
+        const params = {
+            targetAgents: { label: 'Target concurrency (agents)', val: 300, min: 1, max: 100000, step: 10,
+                desc: 'ALL live sessions across the entire installation: both those currently on the GPU (swap-in / prefill / decode) and those waiting on tools with KV in RAM. This is a harness-level metric (concurrent agent cycles), not the number of active vLLM requests — that does not exceed M on the GPU.' },
+            targetSteps: { label: 'Target throughput: steps per day', val: 4000000, min: 1000, max: 100000000000, step: 100000,
+                desc: 'Active when the “Target in steps/day” switch is on. A step is one ITERATION of the agent cycle: generate a tool call, execute it, return the result into context. A task (the “Task length” field) consists of S such steps and ends with a response WITHOUT tool_calls — “tasks per day” is S times fewer than steps. This unit is more honest than “live agents” because it doesn’t depend on how fast each agent runs: speed up the hardware and you reach the same number of steps with fewer GPUs. On the live-agents scale it’s the opposite — slow hardware looks cheaper, because a longer cycle means more of the same agents pile up for the same amount of work.' },
+            ctxTokens: { label: 'Full session context, PEAK (tokens)', val: 50000, min: 1000, max: 1000000, step: 1000,
+                desc: 'The context at the end of a TYPICAL task — not the longest one of all. Important clarification: tasks have different lengths (one is solved in 20k, another in 150k), and sizing doesn’t need to cover the longest one — memory holds the SUM of live sessions, and that sum concentrates around the average more tightly the more sessions there are. The spread between tasks is covered by the “Memory headroom above the mean” field, not by inflating this one. The calculator derives the start and average context ON ITS OWN, no new fields are needed for that: context grows by (output + tool result) per step, so start = peak − (steps−1)·(output+tool), and the average is their mean. Where each goes: peak — into VRAM slots, the RAM pool and swap; start — into the prefill of the new task prompt; average — into the cache-miss cost and the attention cost. Check yourself against the derived numbers under the “Unique KV per session” tile. Two typical profiles: an empty repository with the spec in the prompt starts at 5–10k and grows with code; extending an existing repository starts high (the peak is large relative to the per-task growth). IMPORTANT about the link with “Tool result”: at a fixed peak, a BIGGER tool result LOWERS the derived start (the growth takes up a larger share of the peak), while a smaller one RAISES it, and the scenario gets MORE EXPENSIVE: the start context is prefilled from scratch on every task and costs more in attention through the higher average. If you change the tool profile — recompute the peak too: fewer tokens from tools for the same work also means a smaller final context.' },
+            sharedTokens: { label: 'Shared prefix (tokens)', val: 0, min: 0, max: 1000000, step: 1000,
+                desc: 'A PART of the full context (subtracted from it automatically), byte-identical across all sessions in the batch: system prompt, agent manifest, static document base. APC stores its KV in VRAM once; LRU touches from all sessions keep it hot, it isn’t swapped. It must sit at the start of the prompt and match block-by-block; RAG with per-request retrieval does NOT belong here. If DIFFERENT prefixes coexist on a replica (several agent types) — set their count with the K field below.' },
+            prefixKinds: { label: 'Different prefixes per replica (K)', val: 1, min: 1, max: 64, step: 1,
+                desc: 'How many DIFFERENT shared prefixes live on one replica: agent/manifest types that the load balancer routes to it. Each prefix kind is stored as a separate copy in VRAM and the CPU pool — K copies eat into slots and the pool, even though each session only reads its own. K=1 = one agent type is routed to the replica (the recommended layout: sticky not just by session, but by agent type too). If the load balancer doesn’t guarantee this — enter the real diversity: at a 30k-token prefix, K=8 takes away up to 20% of slots, and this is the only assumption that was silently underestimating procurement.' },
+            outTokens: { label: 'Output per step (tokens)', val: 120, min: 10, max: 32000, step: 10,
+                desc: 'How many tokens the agent generates in one step (reasoning + JSON tool call).' },
+            toolTokens: { label: 'Tool result per step (tokens)', val: 800, min: 0, max: 200000, step: 100,
+                desc: 'How many tokens get added to the context after the tool runs. Their KV doesn’t exist anywhere — they’re prefilled in every mode.' },
+            taskSteps: { label: 'Task length (steps)', val: 20, min: 1, max: 2000, step: 1,
+                desc: 'How many steps the agent takes per task. Amortizes the initial prefill: each new task prefills the entire initial context, on average this is +ctx/S prefill tokens and +KV/S bytes of writes into the pools per step.' },
+            waitTime: { label: 'Tool wait (s)', val: 8.0, min: 0, max: 3600, step: 0.5,
+                desc: 'Execution time of the external function (DB, API, build). While the session waits, its KV lives in the RAM pool (offload) or occupies VRAM (resident mode).' },
+            missPct: { label: 'Cache misses (% of steps)', val: 2, min: 0, max: 100, step: 0.5,
+                desc: 'Fraction of steps where the session’s KV is found neither in VRAM nor in the CPU pool, and the unique part gets prefilled again: replica restart/rollout, node drain for maintenance, sticky-routing miss, eviction under a burst. Each miss presses on the OVERALL prefill ceiling — when bound by prefill, even 1–2% of misses eat up tens of percent of capacity. 0 = ideal cache (best-case procurement); 1–2% is the realistic minimum for a live cluster, the default sits at its upper edge. Measured with a chaos test on the test bench (kill a replica under load).' },
+            slaTok: { label: 'SLA: tok/s per session (0 — only when the target is in steps/day)', val: 30, min: 0, max: 300, step: 1,
+                desc: 'Target generation speed per user (perceived, accounting for the MTP multiplier). WHEN THE TARGET IS IN AGENTS THIS FIELD IS MANDATORY: without a latency budget, “N live agents” is equally satisfied by fast and slow hardware, and the calculation starts rewarding slow cards. When the target is in steps/day the field is optional — there the budget is set by the target itself. Sets the PASS-DURATION budget (MTP/SLA): the decoding batch is trimmed so the pass fits the budget — using the same equation that computes the actual speed (reading weights and KV + compute occupancy from prefill, both roofline branches). 0 — the batch is determined by memory alone, speed comes out as a derived value. SLA is a LOWER bound: if the batch is small for other reasons (e.g. bound by prefill), the actual speed will be ABOVE the SLA — that is not a bug. When the SLA is the binding constraint, free VRAM is kept for the blocks of waiting sessions.' },
+            kvKiB: { label: 'KV cache, KiB/token', val: 48, min: 1, max: 1000, step: 0.5,
+                desc: 'Formula: 2 · num_layers · num_kv_heads · head_dim · bytes(dtype) / 1024. For compressed attention (MLA) — bytes of ONE cache copy: turn on the “Cache duplicated on every card” switch, and the calculator multiplies it by TP. Qwen3-Coder-30B-A3B (48 layers, 4 KV heads, head_dim 128): FP8 → 48 KiB, BF16 → 96 KiB.' },
+            stateMiB: { label: 'Fixed per-session state, net, MiB (0 — no linear layers)', val: 0, min: 0, max: 100000, step: 1,
+                desc: 'The net volume of state that does NOT grow with context: the state of the linear layers of hybrid models (KDA in GLM-5.3-Flash, Gated DeltaNet in the Qwen hybrids) and their convolutional buffers. It is split across cards by heads, NOT stored as a copy on every card — the “Cache duplicated on every card” switch does not affect it. This field is TRAFFIC: on every generation token the state is read and rewritten in full (2 × volume, the read fraction does not apply to it), and it is also what travels over PCIe during a swap — the pages go over the bus without padding. MEMORY is computed from the next field: vLLM lays the state out across blocks of the shared pool, and in memory it is several times larger. To compute: linear layers × heads × dk × dv × bytes of state + convolutional buffer. GLM-5.3-Flash: 34 × 64 × 128 × 128 × 4 bytes (fp32) + 34 × 24,576 × 3 × 2 bytes ≈ 140.8 MiB. 0 — there are no linear layers. WARNING: the Qwen hybrid presets do not yet fill in this field (0) — their session memory and traffic are undersized by the size of the state.' },
+            stateAllocMiB: { label: 'Session state in vLLM memory, MiB (0 — equal to net)', val: 0, min: 0, max: 100000, step: 1,
+                desc: 'How much memory vLLM ALLOCATES for the state of one session — this number goes into the VRAM slots and the RAM pool, the field above remains for traffic. Why it is larger than the net value (vLLM code): the attention block is rounded up to a multiple of 128 tokens so that a page of the attention cache fits a page of one layer’s state, and the state page is padded up to it; the linear layers are split into groups by the number of attention layers, each group occupies its own block of the shared pool; with the prefix cache (align mode — turns on by itself, and for an agent session the prefix cache is mandatory, otherwise every step prefills the whole context), 2 blocks are held per group, plus 1 block for the indexer’s tail. Formula: (groups × 2 + 1) × attention layers × tokens per block × cache bytes per token and layer × TP. GLM-5.3-Flash, FP8 cache: 4 groups, a 49.8 MiB block per replica, 9 blocks = 448 MiB at TP 2 and 4 (TP=1 — 441, TP=8 — 474; with a BF16 cache 434 / 434 / 460 / 511) — 3.2× larger than the net 140.8. In the RAM pool a session holds 1–2 blocks per group (the point at the prompt boundary, and an aligned one), the field gives the upper estimate. The value is for vLLM WITHOUT speculative decoding: with MTP every draft token adds a block per group, and the draft layer has its own cache (1 token ≈ 543 MiB, 3 — about 894 at TP=2 and 920 at TP=4); with an MTP multiplier above 1 the calculator will warn. 0 — the allocation equals the net value (models without linear layers).' },
+            weights: { label: 'Model weights, total (GiB)', val: 29, min: 1, max: 4000, step: 1,
+                desc: 'Full model weights, not divided across cards — the calculator shards them across Tensor Parallel itself. Qwen3-Coder-30B FP8 ≈ 29 GiB, Qwen3-235B FP8 ≈ 220 GiB, GLM-5.2 FP8 ≈ 700 GiB. For MoE at full batch almost all experts get touched, so decode reads the full weight bytes — “active parameters” only affect prefill. At a SMALL decode batch (an SLA cut or a tiny replica, b < 32) the fraction of experts actually read is 1−(1−k/E)^b — the model conservatively reads everything, so for such regimes the answer is overstated by a multiple, calculate it separately. Model doesn’t fit — raise TP, not lower the weights.' },
+            prefTps: { label: 'Measured prefill, tok/s (0 — derive from architecture)', val: 0, min: 0, max: 1000000, step: 500,
+                desc: 'PREFILL PHASE — processing the entire input context at once, before generation; the resource is compute, it does NOT affect generation speed. 0 means: the calculator derives the ceiling itself from the four fields below and the current context length, and shows it as a separate tile. Put a NONZERO value here only when you have a BENCH MEASUREMENT (vllm bench serve at the target length, prefix cache off) — then it overrides the calculation; the “Card peak” and “MoE” fields then only affect the plausibility check and are highlighted in a paler shade. The measurement is specific to a SPECIFIC model, so picking a model preset resets this field to 0. Why the derived value is more honest than one entered by hand: prefill is NOT a model constant, it falls with context length, because attention at prefill costs operations that grow with the number of tokens already processed. On a short prompt this add-on is a few percent, at 128k for a dense model it’s a third of the work, at 200k for a model with full attention it’s two thirds. One hand-entered number for all lengths is exactly the error that undersizes procurement by a multiple.' },
+            actParams: { label: 'Active parameters, B', val: 24.35, min: 0.1, max: 2000, step: 0.05,
+                desc: 'How many parameters actually get MULTIPLIED on each text token. For a dense model this is nearly all the weights; for a mixture of experts — only the ones working on the token (shared + router-selected). Must be counted WITHOUT the input embedding table (that’s a row lookup, not a multiplication), WITHOUT the vision encoder of a multimodal model, and WITHOUT the draft MTP head. Reference points: Qwen3.8-27B (dense) — 24.35; GLM-5.2 (MoE) — 39; DeepSeek V4 Flash (MoE) — 13. Checked against config.json and the model card.' },
+            attnLayers: { label: 'Layers with full attention', val: 16, min: 1, max: 200, step: 1,
+                desc: 'Number of layers where attention looks at the WHOLE context — only these drive the cost growth with length. In an ordinary transformer this is all layers. In a hybrid architecture — only a part: for Qwen3.8-27B full attention is in 16 layers out of 64, the remaining 48 are linear (Gated DeltaNet), their cost does not grow with length. The layer_types field in config.json shows the layout.' },
+            dQ: { label: 'Query projection width (n_q_heads × head_dim)', val: 6144, min: 128, max: 65536, step: 64,
+                desc: 'The product of the number of query heads and the head dimension — from the config.json fields num_attention_heads and head_dim. This is NOT hidden_size: for GQA and MLA the two diverge, and substituting hidden_size underestimates the cost of attention during prefill. Qwen3.8-27B: 24 × 256 = 6144 at hidden_size 5120. The GLM class: 96 × 128 = 12288 at hidden_size 5120 — twice as large, and procurement changes several-fold because of it. For dense MLA (DeepSeek-V3) compute it from qk_nope_head_dim + qk_rope_head_dim. For SPARSE MLA (DSA) the kernel computes attention in compressed form, during prefill too (the query is projected into the latent, MQA 576/512): width = num_attention_heads × (kv_lora_rank + qk_rope_head_dim / 2) — DeepSeek-V3.2 128 × 544 = 69,632, GLM-5.2 64 × 544 = 34,816, GLM-5.3-Flash 64 × 512 = 32,768.' },
+
+            attnFrac: { label: 'Fraction of KV read during decode', val: 1.0, min: 0.02, max: 1, step: 0.01,
+                desc: 'DECODE PHASE, the resource is HBM reads; it enters t_tok and the SLA budget. f is the fraction of stored KV that attention actually reads on every token. Dense / GQA / MLA attention reads all of it: f = 1.0. Sparse with selection (DSA in DeepSeek-V3.2 and GLM-5.x): f ≈ r + (1 − r) × topK / context, where r is the indexer cache’s share in bytes (during generation it reads its own cache IN FULL); f falls with context length, the presets compute it at 50k. PREFILL: with a zero “Selection budget” the same fraction is applied to prefill attention too — that is honest for a fixed budget without an indexer (Qwen3.8-Flash-Next); with a set budget, prefill computes the main attention from it, the indexer as a separate field, and this fraction does not affect prefill. V4-Flash: 512 compressed entries and a window of 128, but the layers with compression 128 and the indexer cache are read in full — about 0.26 at 50k (an estimate from the byte layout in the vLLM code, verify with a measurement). KV is always stored, swapped and prefilled in full.' },
+            topK: { label: 'Attention selection budget (index_topk), tokens (0 — no selection)', val: 0, min: 0, max: 65536, step: 64,
+                desc: 'PREFILL PHASE, the resource is compute. For sparse attention with selection (DSA: DeepSeek-V3.2, GLM-5.x) the indexer picks topK keys for every query, and the main attention computes only over them — during prefill too (vLLM falls back to dense attention only while the prompt is no longer than topK). When set, the fraction of the main prefill attention is computed AUTOMATICALLY at the current average context, min(1, topK / context), instead of the “Fraction of KV”, which is fixed at one length and includes a full scan of the indexer cache that has nothing to do with the main attention. 0 — there is no selection, prefill takes the “Fraction of KV”, as before. Values: DeepSeek-V3.2, GLM-5.2, GLM-5.3-Flash — 2048 (index_topk from config.json); V4-Flash — 640 (512 compressed entries + a window of the last 128 tokens, an approximation: layers with compression 128 read all their entries — an underestimate of about 15% at a context of ~90k and about 25% at 120k). For such models take the query projection width in compressed form — see the tooltip of that field.' },
+            idxWidth: { label: 'Indexer: Σ over layers index_n_heads × index_head_dim / compression', val: 0, min: 0, max: 4000000, step: 1,
+                desc: 'PREFILL PHASE, the resource is compute. The indexer (the DSA indexer) computes scores over ALL previous keys on every token — the work grows with context the way it does for full attention (scores only, without the weighted sum, in FP8). The key point: vLLM does NOT split it across the replica’s cards — in the model code it is “no tensor parallel, just replicated”: each of the TP cards computes it in full, so at TP=8 it costs 8 times more than it looks on paper. That is exactly how the calculator computes it: prefill from scratch is W × context FLOP per token, delta prefill is twice that — both multiplied by TP. To compute W: Σ over the layers that have an indexer of index_n_heads × index_head_dim / kpool (key compression; if there is none — 1). DeepSeek-V3.2: 61 × 64 × 128 = 499,712; GLM-5.2: the indexer is present on only 21 of 78 layers (index_topk_freq = 4, the rest take the neighbor’s selection) — 21 × 32 × 128 = 86,016; GLM-5.3-Flash: 11 × 32 × 128 / 4 = 11,264; V4-Flash: 21 × 64 × 128 / 4 = 43,008. It does not affect generation: during decode the indexer is bound by reading its own cache, and that is already accounted for in the “Fraction of KV”. The “data-parallel attention” (DP-attention) layout removes this multiplication — the calculator does not compute it yet. 0 — there is no indexer.' },
+            mtpMult: { label: 'MTP/speculative decoding, multiplier (×)', val: 1.0, min: 1, max: 8, step: 0.1,
+                desc: 'Generation speedup from speculative decoding, AS A MULTIPLE of ordinary tok/s. Mechanics: the draft (the model’s built-in MTP head or a separate small draft model) proposes several next tokens, the main model checks the whole bundle in ONE pass — one weight read yields several accepted tokens instead of one. Enter the MEASURED end-to-end speedup — it already accounts for rejected drafts. What to set: 1.0 — disabled or the server doesn’t support it; 1.3–1.6 — mixed chat/analysis; 1.7–2.2 — code and structured JSON (text is predictable → drafts are accepted often; MTP in DeepSeek/GLM, EAGLE-3); 2.5–3.5 — edits to existing text via the n-gram method (the draft is taken straight from the prompt, almost free). Only affects decode (t_gen and the SLA budget): prefill, KV volumes, PCIe and RAM do not change. Be careful with a target in LIVE agents: a faster step shortens the cycle, the cluster does more steps/day — GPUs for the same live-agent TARGET may even grow; if the business target is steps/day, recompute it (see “How this is computed”).' },
+            vram: { label: 'VRAM for vLLM (GiB)', val: 67, min: 8, max: 288, step: 1,
+                desc: 'The card’s memory BUDGET for the vLLM process: physical memory × 0.85. The 0.85 coefficient, not the usual 0.9, because inside the budget vLLM also subtracts non-KV memory: activations of the widest pass and captured CUDA graphs (2–6 GiB per card). This is deliberately not broken out as a separate field — it cannot be measured before buying cards, and the margin in the coefficient covers the spread. Reference points for “what to enter” (memory as seen by nvidia-smi, in GiB × 0.85): H100 / A100 80 GB → 68; H200 141 GB → 119, H20 141 GB → 119 (but H20’s compute peak is 6.7× lower — see the peak field); B200 180 GB (HGX B200 — 1.4 TB across 8 cards) → 152; B300 288 GB (nvidia-smi — 268.6 GiB) → 228; B100 192 GB → ~152 (like B200, no log). Weights are the largest expense item inside the budget; the remainder is sliced into the KV block pool (slots). Cross-check: at startup vLLM logs “GPU KV cache size: N tokens” — that is the pool ÷ KiB/token.' },
+            peakTflops: { label: 'Card peak at the working precision, TFLOPS (dense)', val: 1979, min: 50, max: 40000, step: 1,
+                desc: 'Tensor-core peak AT THE PRECISION THE WEIGHTS ARE STORED IN, without structural sparsity. Precision enters the calculation through TWO independent channels: here — as compute speed (matters for prefill, which is bound by compute), and in the “Model weights, GiB” field — as the read volume (matters for generation, which is bound by memory). Both fields must describe ONE checkpoint: FP4 weights with an FP8 peak will produce nonsense. Dense peaks: H100/H200/H800 SXM — FP8 and INT8 1979, BF16/FP16 989, TF32 495. B200 — FP4 about 9000, FP8 about 4500, BF16 about 2250; GB200 per card is roughly like B200. B300 (Blackwell Ultra) — FP4 about 13,500, FP8 about 4500, BF16 about 2250, and INT8 is cut down to ~190 (do not use INT8 checkpoints on B300). B100 (it barely made it into production) — FP4 about 7000, FP8 about 3500, BF16 about 1750. CAUTION WITH H20: it has a lot of memory (96–141 GiB) and decent bandwidth, but its compute is cut down — dense FP8 only about 296, i.e. 6.7× lower than H100. Leaving the default of 1979 here while taking the memory capacity from H20 means undersizing the procurement by almost an order of magnitude. THE DATASHEET TRAP: NVIDIA prints numbers twice as large with a footnote “shown with sparsity” — the 2:4 scheme requires half the weights to be zeroed out during training, open weights are not prepared that way, and it does not kick in during inference. About INT4: Hopper and Blackwell have no tensor path for it for LLMs (it stayed in Ampere and died) — the modern low precision is FP4 (NVFP4 / MXFP4), and it only exists on Blackwell and newer; on H100/H200 quantizing weights to 4 bits saves MEMORY, but compute runs at a wider precision: weight-only 4-bit (W4A16 — GPTQ/AWQ, and NVFP4 on Hopper via Marlin kernels) is computed in BF16 — so the BF16 peak goes here; 4-bit weights with FP8 activations (W4A8) — the FP8 peak. A doubled “4-bit” peak never happens on Hopper. Mixed precision (e.g. FP4 experts with BF16 attention): the time per token is the SUM of the parts’ times, so enter a weighted peak = Σ active parameters / Σ(part’s parameters / part’s peak). The peak of the dominant part overstates prefill: for GLM-5.3-Flash NVFP4 on B300 it is 13,500 against the honest 4043, because almost half the work per token runs in BF16.' },
+
+            hbm: { label: 'HBM Bandwidth, effective (GB/s)', val: 2400, min: 500, max: 20000, step: 50,
+                desc: 'Effective memory bandwidth of the card — 60–75% of peak: H100 SXM (peak 3350) → ~2200–2500; H200 (peak 4800) → ~2900–3600; B300 (peak 8000) → ~4800–6000. Decode and the SLA budget are computed directly from it; default 2400 ≈ effective H100 SXM (70% of peak — 2345; consistent with the VRAM default 67 ≈ H100: 79.6 GiB × 0.85).' },
+            pcie: { label: 'PCIe Bandwidth (GB/s)', val: 50, min: 5, max: 256, step: 1,
+                desc: 'Effective host↔device bandwidth for DMA with pinned memory of a SINGLE card: Gen5 x16 ≈ 45–55 (peak 63), Gen4 x16 ≈ 22–25. Replica cards swap their shards in parallel — the bandwidths add up, BUT the aggregate is bound by HOST memory: a 2-socket DDR5 node gives ~600–800 GB/s in total, 8×50 GB/s of DMA is already close to that; pinned pools must be NUMA-local to their cards. The bus is duplex — summing the directions in the model is conservative.' },
+            tp: { label: 'Tensor Parallel (cards per replica)', val: 1, min: 1, max: 144, step: 1,
+                desc: 'Number of GPUs in one vLLM replica. Weights, prefix and KV are sharded: each card holds 1/TP, cards’ HBM and PCIe add up, shard swaps run in parallel. Ideal scaling, allreduce overhead is not accounted for. Must be ≤ cards in the node (NVLink domain) and should preferably divide the node evenly — otherwise cards sit idle. Total GPU count = replicas × TP.' },
+            nodeSize: { label: 'Cards in the node (NVLink domain)', val: 8, min: 1, max: 144, step: 1,
+                desc: 'A group of cards connected by NVLink/NVSwitch with full bandwidth each-to-each — Tensor Parallel only lives inside it. Sizes are DISCRETE, “multiple of 4” does not work: 1 — a PCIe server without NVLink (even if there are physically 8-10 cards: without NVLink this is domain 1, TP over PCIe drops decode by a multiple); 2 — a pair over an NVLink bridge; 4 — HGX 4-way (full mesh without NVSwitch); 8 — HGX 8-way with NVSwitch, the HARDWARE maximum of a single server (the baseboard carries 8 modules); 16/32/36/72/144 — rack-scale NVL (GH200/GB200/GB300): NVSwitch is moved out into the rack, the whole rack becomes the domain. Scale on top of the domain with replicas via load balancing, sticky-by-session is mandatory (a condition for the prefix cache and the CPU pool). Procurement is counted in whole nodes.' },
+            utilPct: { label: 'Allowed prefill/PCIe utilization (%)', val: 80, min: 30, max: 100, step: 5,
+                desc: 'A shock absorber for unevenness — the same principle as a CPU reserve for services under peak traffic. Agents don’t come back from tools as an even stream but in bursts; a resource planned to run at 100% meets every burst with a queue — and step latencies blow out for all sessions at once. The knob reserves a share of the prefill ceiling and the PCIe bus for smoothing such peaks: the calculator assigns the replica only the specified percentage of its maximum. The higher the value, the fewer cards on paper, and the closer the cluster is to blowing out under a burst. For procurement — 70–80%; 100% is the theoretical ceiling with no shock absorber.' },
+            ramPool: { label: 'RAM pool per node (GiB)', val: 1024, min: 8, max: 32768, step: 8,
+                desc: 'Host RAM of the node given over to the KV pools. Split between the node’s replicas (replica pool = node ÷ replicas-per-node), and within a replica — between TP workers (cpu_bytes_to_use). 8×H200 nodes usually carry 2–3 TB, GB200/GB300 platforms — more. Managed by LRU, no TTL; a pool smaller than the working set → eviction of live sessions → recompute. The fourth limit on N.' },
+            ramHeadroom: { label: 'Memory headroom above the mean (×)', val: 1.5, min: 1, max: 3, step: 0.05,
+                desc: 'How many times memory must exceed the AVERAGE demand. Applies to BOTH pools — the VRAM slots and the RAM pool — so it also works in resident mode (the offload checkbox does not turn it off). This is where the probabilistic part of the calculation lives. Memory holds the sum of the contexts of all live sessions, and the sum of N independent quantities concentrates: the mean grows as N, the deviation as the square root of N, so the relative spread equals (task_spread/mean)/√N and shrinks fast as N grows. Hence a two-sigma headroom (a shortfall about once in 50): at 36 live sessions, same-type tasks need 1.10, moderate spread — 1.20, a spread of “one task 20k, another 150k” — 1.33, a heavy tail — 1.50; at 100 sessions the same cases give 1.06 / 1.12 / 1.20 / 1.30. Sizing for the LONGEST task (rather than the mean plus headroom) would be provisioning for the event “all N sessions at maximum at once”, whose probability is vanishingly small — in memory terms that is overpaying by a multiple. The default 1.5 covers a heavy tail at a few dozen sessions and, incidentally, finished tasks still sitting in the pool.' },
+        };
+
+        const MODEL_PRESETS = [
+            { n: 'Qwen3-Coder-30B-A3B FP8 — code', c: 'high',
+              v: { moeMode: true, kvKiB: 48, weights: 29, actParams: 2.99, attnLayers: 48, dQ: 4096, attnFrac: 1 },
+              d: 'Mixture of experts, 3B active out of 30. Full attention on all 48 layers, 262k window. The cheapest on compute: few active parameters, fast prefill.' },
+            { n: 'Qwen3-Coder-Next FP8 — code, next generation', c: 'medium',
+              v: { moeMode: true, kvKiB: 12, weights: 74, actParams: 3.1, attnLayers: 12, dQ: 4096, attnFrac: 1 },
+              d: 'Next-generation coder: 3.1B active, but hybrid attention — only 12 layers hold a growing cache, hence 12 KiB/token against 48 for the predecessor. Medium confidence: some fields are computed, not quoted.' },
+            { n: 'Qwen3-Coder-480B-A35B FP8 — code, large', c: 'high',
+              v: { moeMode: true, kvKiB: 124, weights: 447, actParams: 34.5, attnLayers: 62, dQ: 12288, attnFrac: 1 },
+              d: 'The current dedicated Qwen coder: generation 3.8 has NO coder of its own. The architecture is old and hungry: all 62 layers are full attention, 124 KiB/token. At a 262k window that is about 31 GiB of cache per session — memory, not weights, becomes the constraint.' },
+            { n: 'Qwen3-235B-A22B-2507 FP8 — enterprise tasks', c: 'high',
+              v: { moeMode: true, kvKiB: 94, weights: 220, actParams: 21.38, attnLayers: 94, dQ: 8192, attnFrac: 1 },
+              d: 'Mixture of experts, 22B active out of 235. Weights of 220 GiB require TP≥4 on cards of 80 GB each. 262k window.' },
+            { n: 'Qwen3-32B FP8 — chat, dense', c: 'high',
+              v: { moeMode: false, kvKiB: 128, weights: 32, actParams: 31.98, attnLayers: 64, dQ: 8192, attnFrac: 1 },
+              d: 'Dense: all 32B work on every token, but card utilization is higher (0.45 against 0.25 for a mixture of experts). The cache is heavy — 128 KiB/token. The window is only 40,960 tokens.' },
+            { n: 'Qwen3.8-27B FP8 — chat, long context', c: 'high',
+              v: { moeMode: false, kvKiB: 32, weights: 28.7, actParams: 26, attnLayers: 16, dQ: 6144, attnFrac: 1 },
+              d: 'The only dense model in generation 3.8, understands images and video. Hybrid attention: 16 out of 64 layers hold a growing cache, the remaining 48 are linear (Gated DeltaNet) — a fixed-size state. Hence 32 KiB/token at a 262k window. Active 26B is MEASURED from the file headers: 27.78 total minus the embedding table 1.27 minus the vision tower 0.46 (it only runs when there’s an image on the input).' },
+            { n: 'Qwen3.8-Flash-Next FP8 — cheap mass-market chat', c: 'medium',
+              v: { moeMode: true, kvKiB: 12.4, weights: 172.7, actParams: 5.4, attnLayers: 12, dQ: 6144, attnFrac: 0.04 },
+              d: 'THE MAIN TRAP OF THIS SET: only 5.4B active, yet it takes up more space than a 480B model. Two thirds of the volume is an n-gram lookup table with 51B parameters (measured: exactly 51.23B, 95 GiB), for which it does ONLY a row lookup, without a single multiplication. It does not enter compute, it really does eat memory, but it can be offloaded to host RAM. Sparse attention with a fixed budget of 2048 tokens: the read fraction is 0.04 at a 262k window, but at a short 32k it rises to 0.09 — set it higher for short dialogues.' },
+            { n: 'Qwen3.8-2.4T-A95B FP8 — flagship of generation 3.8', c: 'high',
+              v: { moeMode: true, kvKiB: 46, weights: 2324, actParams: 93, attnLayers: 23, dQ: 16384, attnFrac: 1 },
+              d: 'Flagship: 2.4T total, 95B active, 512 experts (10 routed + 1 shared per token). Hybrid: out of 92 layers only 23 have full attention, the remaining 69 are linear. Cache 46 KiB/token — half as heavy as Qwen3-235B, on a model four times larger. Weights of 2324 GiB in FP8 require at least 16–20 cards of 141 GB each, i.e. two nodes and cross-node parallelism — this is OUTSIDE the calculator’s model, calculate one replica per domain.' },
+            { n: 'GLM-4.6 FP8 — code and enterprise tasks', c: 'high',
+              v: { moeMode: true, kvKiB: 184, weights: 337, actParams: 31.22, attnLayers: 92, dQ: 12288, attnFrac: 1 },
+              d: 'Mixture of experts, 32B active. The HEAVIEST cache in the set: 184 KiB/token — at long context memory runs out before compute does. 202,752 window.' },
+            { n: 'DeepSeek-V4-Flash — reasoning, 1M window', c: 'medium',
+              v: { moeMode: true, kvRep: true, kvKiB: 3.37, weights: 155.4, actParams: 12.5, attnLayers: 41, dQ: 32768, attnFrac: 0.26, topK: 640, idxWidth: 43008 },
+              d: 'THE LIGHTEST CACHE there is: 3.37 KiB/token — 37 times smaller than Qwen3-Coder-480B. These are the bytes of ONE copy: vLLM keeps all of this model’s caches as a copy on EVERY card of the replica (verified against the code), the “Cache duplicated on every card” switch is on — at TP=2 the replica’s cache is twice as large. It is not the set of heads that compresses, but the sequence itself: a block of 4 tokens (21 layers) or of 128 (20 layers) collapses into a single entry. That is roughly 2% of an ordinary attention cache — matches the paper’s claim. Weights of 155.4 GiB are computed from the number types and matched the file sizes byte for byte; the checkpoint is natively mixed: experts in FP4, the rest in FP8. The CARD PEAK is set by the platform: this preset has no breakdown of active parameters by precision, so the card’s FP8 peak is taken. On Blackwell the FP4 experts compute faster — the calculation is conservative (fewer cards are actually needed); on Hopper there is no FP4 path, and if the experts run at 16-bit compute (W4A16), the real peak is lower than FP8 — the calculation is optimistic, more cards are actually needed. Which path vLLM picks for V4 on Hopper has not been verified against the code. Read fraction 0.26 at 50k (an estimate from the byte layout in the vLLM code): 512 compressed entries and a window of 128, but the layers with compression 128 and the indexer cache are read in full. Selection budget 640 (512 entries + a window of 128); the indexer is present on 21 layers with compression 4 (W = 43,008), in full on every card. By runs at 3000 agents (default / “Code”): H100 TP=4 — 80/112, H200 TP=2 — 72/96, B100 TP=2 — 48/64, B200 TP=2 — 40/48, B300 TP=2 — 40/48 (TP=1 — 48/72, unstable: 40–56 at ±2% memory bandwidth).' },
+            { n: 'DeepSeek-V3.2-Exp FP8 — reasoning', c: 'low',
+              byArch: { hopper: { kvKiB: 46.94, attnFrac: 0.20 }, blackwell: { kvKiB: 42.18, attnFrac: 0.22 } },
+              v: { moeMode: true, kvRep: true, kvKiB: 46.94, weights: 642, actParams: 36.07, attnLayers: 61, dQ: 69632, attnFrac: 0.20, topK: 2048, idxWidth: 499712 },
+              d: 'LOW CONFIDENCE, verify before procurement (active parameters have not been rechecked). Compressed attention (MLA) with sparse selection: one shared vector is stored per token and layer, and vLLM keeps a full copy of it on EVERY card of the replica — the “Cache duplicated on every card” switch is on. The indexer is present on all 61 layers (64 heads × 128, W = 499,712) and is computed in full on every card: at TP=8 on H200 this is 46–65% of the prefill token’s work (default / “Code” load) — the banner will show it. It is computed as a dense FP8 multiply (0.45 of peak) — kernel efficiency has not been measured. Cache bytes are set by the platform: on Hopper the FlashMLA kernel — 656 bytes of the main cache in DeepSeek’s FP8 format plus 132 bytes of indexer cache per layer, 46.94 KiB/token per copy, read fraction 0.20; on Blackwell the FlashInfer kernel — 576 + 132, 42.18 and 0.22. The --kv-cache-dtype fp8 flag is required: without it the cache is BF16, 76.5 KiB. Attention is computed in compressed form (width 69,632), the main attention over 2048 selected tokens. Weights of 642 GiB are checked against the files (the repository index shows a number twice as large — a legacy field “as if it were BF16”, do not trust it). By runs at 3000 agents at TP=8 (default / “Code”): H200 — 1168/2912, B100 — 320/728, B200 and B300 — 320/664; the model does not fit into an H100 node. H200 sits at the SLA feasibility edge of 30 tok/s (reading the weights is 77% of the pass budget): at an effective memory bandwidth below ~3250 GB/s (≈68% of peak) the calculation swings by a multiple — the banner will warn. Not accounted for: the q_a/kv_a projections replicated across TP (1.77B parameters on every card) — an estimated few percent of cards, not verified. For this model plain TP is a poor layout: “data-parallel attention” (DP-attention) removes both the cache copies and the repeated indexer on every card — the calculator does not compute it yet.' },
+            { n: 'GLM-5.2 FP8 — reasoning, 1M window', c: 'low',
+              byArch: { hopper: { kvKiB: 52.68, attnFrac: 0.09 }, blackwell: { kvKiB: 46.58, attnFrac: 0.10 } },
+              v: { moeMode: true, kvRep: true, kvKiB: 52.68, weights: 704, actParams: 39.05, attnLayers: 78, dQ: 34816, attnFrac: 0.09, topK: 2048, idxWidth: 86016 },
+              d: 'LOW CONFIDENCE, verify before procurement (active parameters have not been rechecked). In vLLM this is literally the same model class as DeepSeek-V3.2: compressed attention (MLA) with sparse selection and a full cache copy on EVERY card of the replica — the “Cache duplicated on every card” switch is on. The indexer sits on only 21 layers out of 78 (index_topk_freq = 4: the remaining layers borrow selection from a neighbor), and vLLM computes it on every card in full. Cache bytes depend on the attention kernel and are set by the platform: on Hopper the FlashMLA kernel (656 bytes of main cache in DeepSeek’s FP8 format) — 52.68 KiB/token per copy, read fraction 0.09; on Blackwell the FlashInfer kernel (576 bytes) — 46.58 and 0.10. Needs the --kv-cache-dtype fp8 flag (it’s in the vLLM recipe): without it the cache is BF16, 1.7× larger. Attention is computed in compressed form (width 34,816), the main part — over 2048 selected tokens. Weights of 704 GiB are checked against the files: on H200 and on B100/B200/B300 TP=8 is needed, the model doesn’t fit in an H100 node. By runs on 3000 agents (default / “Code”): H200 — 864/2056, B100, B200 and B300 — 360/736. H200 sits at the SLA feasibility edge of 30 tok/s (weight reads — 84% of the pass budget): at an effective memory bandwidth below ~3150 GB/s (≈66% of peak) the card count grows steeply (at 3000 GB/s — 1520/3192) — the banner will warn. For a model like this pure TP is expensive: the “data-parallel attention” (DP-attention) layout removes cache copies — the calculator doesn’t compute it yet; the connector’s canonical_layout option (one copy in the RAM pool) would lower B300, by estimate (RAM pool ×8), to roughly 136/280. At a 1M window the attention cost at prefill becomes the main expense item, see the ceiling tile.' },
+            { n: 'GLM-5.3-Flash FP8 — agentic tasks, 1M window', c: 'low', tpMin: 4,
+              mix: { fp8: 11.073, bf16: 5.669 },
+              v: { moeMode: true, kvRep: true, kvKiB: 5.854, stateMiB: 140.8, stateAllocMiB: 448, weights: 306, actParams: 16.74, attnLayers: 11, dQ: 32768, attnFrac: 0.10, topK: 2048, idxWidth: 11264 },
+              d: 'LOW CONFIDENCE, verify before procurement (support in vLLM is fresh, some numbers are an estimate). The official FP8 checkpoint from Z.ai: 320B total, 16.7B multiplied per token. Hybrid: only 11 out of 45 layers hold a growing cache (compressed sparse attention), the remaining 34 are linear — their state is set by two fields: 140.8 MiB of traffic and 448 MiB of memory (vLLM lays it out across blocks of the shared pool, and with the prefix cache — 3.2× larger than net). FP8 cache on both architectures — per the vLLM code (on Hopper the FLASHINFER_MLA_SPARSE_SM90 kernel), although the vLLM recipe says Hopper only gets BF16: check the startup log. Needs the --kv-cache-dtype fp8 flag — the checkpoint has no cache scheme, and without the flag the cache is BF16 (11.354 KiB); this barely affects the card count (H200 — the same 120/152: bound by prefill, not memory). The cache is stored as a copy on EVERY card of the replica (the switch is on), 5.854 KiB/token per copy. The platform sets the peak: a third of the token’s work runs in BF16, so the peak is weighted — 1478 on Hopper, 3362 on B200/B300, 2615 on B100. Attention is computed in compressed form (width 32,768), the main part — over 2048 selected tokens; the indexer (W = 11,264) is computed by vLLM on every card in full (as a dense FP8 multiply, peak share 0.45 — not measured). The pair sets TP — at least 4 (the main example of the vLLM recipe uses TP=4), more if the weights do not fit (H100 — 8); the best by runs on 3000 agents (default / “Code”): H100 — TP=8 (120/168), H200 — TP=4 (120/152; TP=8 — 120/160), B100 — TP=4 (72/88), B200 — TP=4 (56/72), B300 — TP=4 (56/72; TP=2 — 56/80). The hybrid recomputes the model’s past output on every step: vLLM keeps state only at the prompt boundary — the calculator accounts for this. Weights of 306 GiB are checked against the files byte for byte, including the draft MTP layer; with MTP enabled the state memory grows (1 draft token ≈ 543 MiB, 3 — 894–920) — the calculator will warn. The read fraction of 0.10 is computed at a 50k context: 2048 selected tokens plus a scan of the indexer’s cache.' },
+            { n: 'GLM-5.3-Flash NVFP4 — agentic tasks, for Blackwell', c: 'low', tpMin: 4, needs: 'blackwell',
+              mix: { fp4: 8.909, bf16: 7.834 },
+              v: { moeMode: true, kvRep: true, kvKiB: 5.854, stateMiB: 140.8, stateAllocMiB: 448, weights: 190, actParams: 16.74, attnLayers: 11, dQ: 32768, attnFrac: 0.10, topK: 2048, idxWidth: 11264 },
+              d: 'LOW CONFIDENCE, verify before procurement (the checkpoint is verified by NVIDIA on GB200, not on B100/B200/B300). NVIDIA’s NVFP4 version: only the experts and the dense MLPs are in 4 bits, attention, the shared expert and MTP stay in BF16; on six benchmarks, including the agentic Terminal-Bench 2.1, it matches BF16 within noise. For Blackwell: Hopper has no FP4 path — per the vLLM code the weights go through Marlin kernels computed in BF16 (the vLLM recipe requires Blackwell, running on Hopper is not verified), and the FP8 version is more advantageous there; the banner will warn. Weights 190 GiB against 306 for FP8. The platform sets the peak, it is weighted: almost half of the token’s work runs in BF16, and on Blackwell it is four to six times slower than FP4 — 4043 on B300, 3744 on B200, 2912 on B100, not the pure FP4 figure (13,500 / 9000 / 7000). FP8 cache, 5.854 KiB/token per copy, duplicated on every card; state — 140.8 MiB of traffic and 448 MiB of memory, same as the FP8 version. The pair sets TP — 4, as in NVIDIA’s launch instructions (vLLM and SGLang); by runs on 3000 agents (default / “Code”) TP=2 and TP=4 give the same result: B300 — 48/64, B200 — 56/64, B100 — 64/80; TP=1 on B300 doesn’t hold at an SLA of 30 tok/s. Read fraction 0.10 at a 50k context.' },
+        ];
+
+        const LOAD_PRESETS = [
+            { n: 'Code: extending an existing repository',
+              v: { ctxTokens: 120000, sharedTokens: 2000, prefixKinds: 3, outTokens: 200, toolTokens: 2500, taskSteps: 25, waitTime: 12, missPct: 2 },
+              d: 'The very first tool call returns the classes and dependencies it read, so the task STARTS high: the derived starting context is about 55 thousand tokens. 12 s wait — reading files, build, tests.' },
+            { n: 'Code: new module from scratch',
+              v: { ctxTokens: 35000, sharedTokens: 2000, prefixKinds: 3, outTokens: 300, toolTokens: 700, taskSteps: 30, waitTime: 8, missPct: 2 },
+              d: 'Empty repository and the spec in the prompt: the derived starting context is about 6 thousand tokens, after that it builds up from the written code. Many short steps.' },
+            { n: 'Enterprise tasks: documents and regulations',
+              v: { ctxTokens: 60000, sharedTokens: 20000, prefixKinds: 2, outTokens: 400, toolTokens: 1500, taskSteps: 12, waitTime: 6, missPct: 2 },
+              d: 'A large shared prefix: the system prompt with policies and regulations is identical across all sessions, stored in video memory once per each of its variants. Tasks are short.' },
+            { n: 'Reasoning and analysis',
+              v: { ctxTokens: 50000, sharedTokens: 1000, prefixKinds: 1, outTokens: 4000, toolTokens: 500, taskSteps: 8, waitTime: 4, missPct: 2 },
+              d: 'Long generation per step (reasoning), few tool calls. Here the bottleneck shifts from prefill to memory reads during generation.' },
+            { n: 'Chat in Russian',
+              v: { ctxTokens: 12000, sharedTokens: 1500, prefixKinds: 2, outTokens: 500, toolTokens: 0, taskSteps: 6, waitTime: 2, missPct: 3 },
+              d: 'Short dialogues without tools. IMPORTANT about Russian: these models’ tokenizers cut Cyrillic finer than Latin script — the same text yields roughly twice as many tokens as in English. The context in tokens already accounts for this, but when converting from characters do not forget the multiplier.' },
+        ];
+
+        const PLATFORM_PRESETS = [
+            { n: '8×H100 SXM 80 GB (HGX/DGX)', c: 'high', arch: 'hopper', peaks: { fp8: 1979, bf16: 989 },
+              v: { vram: 68, hbm: 2345, pcie: 50, nodeSize: 8, ramPool: 1536 },
+              d: 'Eight H100 SXM on NVSwitch. Memory: nvidia-smi sees 81,559 MiB = 79.6 GiB, ×0.85 = 68. Dense peaks: FP8 1979, BF16 989 (3958 and 1979 in the datasheet — with sparsity); Hopper has no FP4 path: 4-bit weights save memory but are computed through BF16. HBM 3.35 TB/s, 70% budgeted — 2345. Host: PCIe Gen5 (128 GB/s in both directions), ~50 GB/s in one. DGX H100 node RAM — 2 TB, 1.5 TiB allotted for KV. TP is set by the pair with the model.' },
+            { n: '8×H200 SXM 141 GB (HGX/DGX)', c: 'high', arch: 'hopper', peaks: { fp8: 1979, bf16: 989 },
+              v: { vram: 119, hbm: 3360, pcie: 50, nodeSize: 8, ramPool: 1536 },
+              d: 'Eight H200 SXM on NVSwitch. Memory: nvidia-smi sees 140.4 GiB, ×0.85 = 119. Same compute as H100: dense peaks FP8 1979, BF16 989 (3958 in the datasheet — with sparsity); Hopper has no FP4 path: 4-bit weights save memory but are computed through BF16. HBM 4.8 TB/s, 70% budgeted — 3360. Host: PCIe Gen5 x16 per card, ~50 GB/s. DGX H200 node RAM — 2 TB, 1.5 TiB allotted for KV. TP is set by the pair with the model.' },
+            { n: '8×B100 192 GB (HGX, Blackwell)', c: 'low', arch: 'blackwell', peaks: { fp4: 7000, fp8: 3500, bf16: 1750 },
+              v: { vram: 152, hbm: 5600, pcie: 50, nodeSize: 8, ramPool: 1536 },
+              d: 'LOW CONFIDENCE: the card barely made it into production, NVIDIA doesn’t publish current specs. Peaks — from the archive of the NVIDIA HGX page (April 2024: 112/56/28 PFLOPS with sparsity per node), dense per card: FP4 7000, FP8 3500, BF16 1750. Memory 192 GB; couldn’t find an nvidia-smi log — taken as for B200 (183,359 MiB), ×0.85 = 152. HBM 8 TB/s (secondary sources), 70% budgeted — 5600. PCIe: sources contradict each other (Gen5 or Gen6) — ~50 GB/s budgeted, same as B200. DGX B100 never existed; node RAM — estimated at 1.5 TiB for KV.' },
+            { n: '8×B200 180 GB (HGX/DGX, Blackwell)', c: 'high', arch: 'blackwell', peaks: { fp4: 9000, fp8: 4500, bf16: 2250 },
+              v: { vram: 152, hbm: 5600, pcie: 50, nodeSize: 8, ramPool: 1536 },
+              d: 'Eight B200 on NVSwitch. Memory: NVIDIA states 180 GB (DGX B200 — 1,440 GB per node), nvidia-smi sees 183,359 MiB = 179.1 GiB, ×0.85 = 152. Dense peaks per the HGX page (144|72 PFLOPS FP4, 72 FP8, 36 BF16 per node with sparsity): FP4 9000, FP8 4500, BF16 2250. HBM 8 TB/s, 70% budgeted — 5600 (estimate, verify by measurement). Host: PCIe Gen5 x16 (128 GB/s in both directions, per Lenovo and Supermicro specs), ~50 GB/s. RAM DGX B200 — 2 TB (up to 4), 1.5 TiB for KV.' },
+            { n: '8×B300 288 GB (HGX/DGX, Blackwell Ultra)', c: 'medium', arch: 'blackwell', peaks: { fp4: 13500, fp8: 4500, bf16: 2250 },
+              v: { vram: 228, hbm: 5600, pcie: 50, nodeSize: 8, ramPool: 1536 },
+              d: 'Eight B300 on NVSwitch. Do NOT confuse with GB300 NVL72: there the domain is a rack of 72 cards, that is a different calculation. Memory: nvidia-smi sees 268.6 GiB out of the “288 GB” (NVIDIA states 2.1 TB per node), ×0.85 = 228. Dense peaks: FP4 13,500, FP8 4500, BF16 2250 (72 PFLOPS FP8 per node in the datasheet — with sparsity); B300’s INT8 is cut down to ~190 per card: don’t bring INT8 checkpoints here. HBM up to 8 TB/s, 70% budgeted — 5600 (estimate, verify by measurement). PCIe: Gen6 to the NIC, but Gen5 x16 per card to the host per the HGX reference architecture — ~50 GB/s (estimate). RAM: DGX B300 — 2 TB (up to 4), 1.5 TiB for KV; at 4 TB set ~3 TiB.' },
+        ];
+
+        const container = document.getElementById('inputs-container');
+        const state = { offloadOn: true, reserveOn: true, moeMode: false, kvRep: false, stepsMode: false };
+
+        function renderParam(id, parent, up) {
+            const p = params[id];
+            state[id] = p.val;
+            const el = document.createElement('div');
+            el.id = `wrap-${id}`;
+            el.innerHTML = `
+                <div class="flex justify-between items-center mb-1 gap-2">
+                    <label class="text-sm font-medium text-slate-700 flex items-center cursor-help tooltip relative">
+                        ${p.label}
+                        <svg class="w-4 h-4 ml-1 text-slate-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        <span class="tooltip-text invisible opacity-0 absolute left-0 ${up ? 'bottom-6' : 'top-6'} z-20 w-72 p-2 bg-slate-800 text-white text-xs rounded shadow-lg transition-opacity duration-200 font-normal">${p.desc}</span>
+                    </label>
+                    <input type="number" id="num-${id}" value="${p.val}" min="${p.min}" max="${p.max}" step="${p.step}"
+                           class="w-24 text-right font-mono text-sm border border-slate-300 rounded px-2 py-0.5 focus:outline-none focus:ring-1 focus:ring-slate-500">
+                </div>
+                <input type="range" id="rng-${id}" min="${p.min}" max="${p.max}" step="${p.step}" value="${p.val}"
+                       class="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-slate-600">
+            `;
+            parent.appendChild(el);
+
+            const rng = el.querySelector(`#rng-${id}`);
+            const num = el.querySelector(`#num-${id}`);
+            rng.addEventListener('input', () => {
+                hashRejected = 0; hashMissing = 0;
+                state[id] = parseFloat(rng.value);
+                num.value = rng.value;
+                calculate();
+            });
+            num.addEventListener('input', () => {
+                const v = parseFloat(num.value);
+                if (!isFinite(v) || v < p.min || v > p.max) { num.classList.add('ring-2', 'ring-red-400'); return; }
+                num.classList.remove('ring-2', 'ring-red-400');
+                hashRejected = 0; hashMissing = 0;
+                state[id] = v;
+                rng.value = v;
+                calculate();
+            });
+            num.addEventListener('change', () => {
+                let v = parseFloat(num.value);
+                if (!isFinite(v)) v = state[id];
+                v = Math.min(p.max, Math.max(p.min, v));
+                num.value = v;
+                num.classList.remove('ring-2', 'ring-red-400');
+                if (v === state[id]) return;
+                hashRejected = 0; hashMissing = 0;
+                state[id] = v;
+                rng.value = v;
+                calculate();
+            });
+        }
+
+        function applyPreset(vals) {
+            hashRejected = 0; hashMissing = 0;
+            Object.keys(vals).forEach(k => {
+                state[k] = vals[k];
+                const num = document.getElementById('num-' + k);
+                const rng = document.getElementById('rng-' + k);
+                if (num) num.value = vals[k];
+                if (rng) rng.value = vals[k];
+            });
+            if ('moeMode' in vals) { const c = document.getElementById('moeMode'); if (c) c.checked = !!vals.moeMode; }
+            if ('kvRep' in vals) { const c = document.getElementById('kvRep'); if (c) c.checked = !!vals.kvRep; }
+            calculate();
+        }
+        function selectedPreset(selId, list) { const el = document.getElementById(selId); return (el && el.value !== '') ? list[+el.value] : null; }
+        function mixPeak(mix, peaks) {
+            let n = 0, time = 0;
+            Object.keys(mix).forEach(k => { n += mix[k]; time += mix[k] / (peaks[k] || peaks.bf16); });
+            return Math.round(n / time);
+        }
+        function minFitTp(weights, vram, node) {
+            let tp = 1;
+            while (tp * 2 <= node && weights > 0.7 * vram * tp) tp *= 2;
+            return tp;
+        }
+        function pairOverlay() {
+            const m = selectedPreset('preset-model', MODEL_PRESETS), p = selectedPreset('preset-platform', PLATFORM_PRESETS);
+            if (!p || !m) return {};
+            const o = { peakTflops: m.mix ? mixPeak(m.mix, p.peaks) : p.peaks.fp8 };
+            if (m.byArch && m.byArch[p.arch]) Object.assign(o, m.byArch[p.arch]);
+            o.tp = Math.min(p.v.nodeSize, Math.max(minFitTp(m.v.weights, p.v.vram, p.v.nodeSize), m.tpMin || 1));
+            return o;
+        }
+        function checkPair() {
+            const w = document.getElementById('preset-pair-warn'); if (!w) return;
+            const m = selectedPreset('preset-model', MODEL_PRESETS), p = selectedPreset('preset-platform', PLATFORM_PRESETS);
+            w.innerText = (m && p && m.needs && m.needs !== p.arch)
+                ? `The pair is unfavorable: “${m.n}” is a 4-bit NVFP4 checkpoint, and “${p.n}” has no hardware FP4 path. Per the vLLM code the weights go through Marlin kernels computed in BF16 — that’s how the calculator computes the peak, — but the vLLM recipe requires Blackwell, running on Hopper is not verified, and the FP8 version of this model is faster here: take it.`
+                : (m && !p) ? 'Platform not selected: the card’s peak, TP and cache type stayed as they were and may belong to a different pair — check these fields or choose a platform.'
+                : (p && !m) ? 'Model not selected: the card’s peak, TP and cache type haven’t changed — without a model the calculator doesn’t know the weights’ precision and size. Choose a model or check these fields by hand.' : '';
+        }
+        function buildPresetPicker(title, list, hintId, selId, extraDefaults, overlay) {
+            const wrap = document.createElement('div');
+            wrap.innerHTML = `
+                <label class="block text-sm font-medium text-slate-700 mb-1">${title}</label>
+                <select id="${selId}" class="w-full text-sm border border-slate-300 rounded px-2 py-1.5 bg-white focus:outline-none focus:ring-1 focus:ring-slate-500">
+                    <option value="">— select —</option>
+                    ${list.map((x, i) => `<option value="${i}">${x.n}${x.c ? '  [' + (x.c === 'high' ? 'verified' : x.c === 'medium' ? 'medium confidence' : 'LOW confidence') + ']' : ''}</option>`).join('')}
+                </select>
+                <div class="text-[11px] text-slate-500 mt-1 leading-snug" id="${hintId}"></div>
+            `;
+            container.appendChild(wrap);
+            document.getElementById(selId).addEventListener('change', (e) => {
+                const i = parseInt(e.target.value, 10);
+                const h = document.getElementById(hintId);
+                if (isNaN(i)) { h.innerText = ''; checkPair(); return; }
+                applyPreset(Object.assign({}, extraDefaults || {}, list[i].v, overlay ? overlay() : {}));
+                h.innerText = list[i].d;
+                h.className = 'text-[11px] mt-1 leading-snug ' + (list[i].c === 'low' ? 'text-amber-700' : 'text-slate-500');
+                checkPair();
+            });
+        }
+        const presetHead = document.createElement('div');
+        presetHead.className = 'text-xs font-semibold uppercase tracking-wider text-slate-400';
+        presetHead.innerText = 'Presets';
+        container.appendChild(presetHead);
+        buildPresetPicker('Model (fills the “Model” group)', MODEL_PRESETS, 'preset-model-hint', 'preset-model', { prefTps: 0, mtpMult: 1, kvRep: false, stateMiB: 0, stateAllocMiB: 0, topK: 0, idxWidth: 0 }, pairOverlay);
+        buildPresetPicker('Load profile (fills in the “Load” group)', LOAD_PRESETS, 'preset-load-hint', 'preset-load');
+        buildPresetPicker('Platform (fills the “Platform” group; TP is set by pairing with the model)', PLATFORM_PRESETS, 'preset-platform-hint', 'preset-platform', null, pairOverlay);
+        const pairWarn = document.createElement('div');
+        pairWarn.id = 'preset-pair-warn';
+        pairWarn.className = 'text-[11px] text-amber-700 leading-snug';
+        container.appendChild(pairWarn);
+        const presetNote = document.createElement('div');
+        presetNote.className = 'text-[11px] text-slate-400 leading-snug pb-1';
+        presetNote.innerText = 'Presets touch only their own group, except one: the card peak is set by the PAIR. The platform knows card peaks by precision, the model knows which precision its weights are stored in; for mixed precision the calculator computes the weighted peak itself, otherwise it takes the card’s FP8 peak. For some models the cache bytes depend on the architecture’s attention kernel (DeepSeek-V3.2, GLM-5.2) — the platform choice will re-set those too. TP is also set by the pair: the smallest TP within the node at which the weights take up no more than 70% of the replica’s memory, but not less than the model’s recommended minimum (4 for GLM-5.3-Flash, as in the launch instructions). This is a starting point, not the optimum — the best TP from actual runs is given in the model preset’s description; compare against TP×2. An incompatible pair (a 4-bit checkpoint on Hopper) produces a banner. The model preset also resets the manual prefill measurement to 0 and MTP to 1: those are specific to the particular model. Model data comes from config.json and the headers of their repositories’ files, platform data from NVIDIA documents; the confidence label states what is confirmed verbatim and what is computed.';
+        container.appendChild(presetNote);
+
+        sections.forEach(sec => {
+            const h = document.createElement('div');
+            h.className = 'text-xs font-semibold uppercase tracking-wider text-slate-400 pt-2';
+            h.innerText = sec.title;
+            container.appendChild(h);
+            sec.ids.forEach(id => renderParam(id, container, ['tp', 'nodeSize', 'utilPct'].includes(id)));
+        });
+
+        const offH = document.createElement('div');
+        offH.className = 'text-xs font-semibold uppercase tracking-wider text-slate-400 pt-2';
+        offH.innerText = 'Modes (vLLM)';
+        container.appendChild(offH);
+
+        const stepsToggle = document.createElement('div');
+        stepsToggle.className = 'flex items-center justify-between bg-slate-100 rounded-lg px-3 py-2.5';
+        stepsToggle.innerHTML = `
+            <label for="stepsMode" class="text-sm font-medium text-slate-700 flex items-center cursor-pointer tooltip relative">
+                Target in steps/day (not in agents)
+                <svg class="w-4 h-4 ml-1 text-slate-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                <span class="tooltip-text invisible opacity-0 absolute left-0 bottom-6 z-20 w-72 p-2 bg-slate-800 text-white text-xs rounded shadow-lg transition-opacity duration-200 font-normal">Turn this on if the business goal is a volume of work. Turn it off if the goal is the number of concurrent sessions; then you MUST set an SLA on generation speed, otherwise the task is degenerate: without a latency budget, “300 live agents” is equally satisfied by fast hardware and by slow hardware where those same 300 agents just barely crawl — and the sheet will start recommending slow cards as cheaper.</span>
+            </label>
+            <input type="checkbox" id="stepsMode" class="w-5 h-5 accent-emerald-600 cursor-pointer">
+        `;
+        container.appendChild(stepsToggle);
+        function syncGoalUI() {
+            [['targetAgents', state.stepsMode], ['targetSteps', !state.stepsMode]].forEach(([id, dim]) => {
+                const w = document.getElementById(`wrap-${id}`);
+                if (!w) return;
+                w.style.opacity = dim ? '0.35' : '1';
+                const n = document.getElementById(`num-${id}`); if (n) n.disabled = dim;
+                const r = document.getElementById(`rng-${id}`); if (r) r.disabled = dim;
+            });
+        }
+        document.getElementById('stepsMode').addEventListener('change', (e) => {
+            hashRejected = 0; hashMissing = 0;
+            state.stepsMode = e.target.checked;
+            syncGoalUI();
+            calculate();
+        });
+        syncGoalUI();
+
+        const moeToggle = document.createElement('div');
+        moeToggle.id = 'wrap-moeMode';
+        moeToggle.className = 'flex items-center justify-between bg-slate-100 rounded-lg px-3 py-2.5';
+        moeToggle.innerHTML = `
+            <label for="moeMode" class="text-sm font-medium text-slate-700 flex items-center cursor-pointer tooltip relative">
+                Model is a mixture of experts (MoE)
+                <svg class="w-4 h-4 ml-1 text-slate-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                <span class="tooltip-text invisible opacity-0 absolute left-0 bottom-6 z-20 w-72 p-2 bg-slate-800 text-white text-xs rounded shadow-lg transition-opacity duration-200 font-normal">The only thing you need to know about the model beyond config.json, and it is visible from the model card: whether it has experts (the num_experts / num_experts_per_tok fields). This determines the fraction of the card’s peak throughput squeezed out at prefill: for a dense model the multiplications are large and unbroken — 0.45 is used; for a mixture of experts the batch is split between experts, each one’s matrix becomes too narrow for the tensor cores, plus a token travels to the card holding its expert and back — 0.25 is used. This is not asked for as a number: before buying cards there is nowhere to get it from anyway, and it is predictable from the model’s class.</span>
+            </label>
+            <input type="checkbox" id="moeMode" class="w-5 h-5 accent-emerald-600 cursor-pointer">
+        `;
+        container.appendChild(moeToggle);
+        document.getElementById('moeMode').addEventListener('change', (e) => {
+            hashRejected = 0; hashMissing = 0;
+            state.moeMode = e.target.checked;
+            calculate();
+        });
+
+        const kvRepToggle = document.createElement('div');
+        kvRepToggle.className = 'flex items-center justify-between bg-slate-100 rounded-lg px-3 py-2.5';
+        kvRepToggle.innerHTML = `
+            <label for="kvRep" class="text-sm font-medium text-slate-700 flex items-center cursor-pointer tooltip relative">
+                Cache duplicated on every card (MLA)
+                <svg class="w-4 h-4 ml-1 text-slate-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                <span class="tooltip-text invisible opacity-0 absolute left-0 bottom-6 z-20 w-72 p-2 bg-slate-800 text-white text-xs rounded shadow-lg transition-opacity duration-200 font-normal">Turn on for compressed attention (MLA: DeepSeek V3/V3.2/V4, GLM-5.x) under a pure-TP layout: there one shared vector is stored per layer, not a set of heads, so there is nothing to split the cache across the replica’s cards for — vLLM keeps a full copy on EVERY card. In that case the “KV cache, KiB/token” field holds the bytes of ONE copy, and the calculator multiplies them by TP: at TP=8 the session takes up 8 times more replica memory than it would with splitting, and the same multiple goes into the RAM pool and across PCIe (each card offloads its own copy). If memory binds the procurement, the number of cards grows by nearly a factor of TP — this is not the model getting more expensive, it is a removed bug: without the switch the calculator assumed the cache was split. Such models are usually laid out differently — with data-parallel attention (DP-attention: TP=1 inside each DP rank plus experts spread across cards, in vLLM --data-parallel-size N --enable-expert-parallel): each card serves its own sessions and holds only their cache, there are no copies (if TP is greater than 1 inside a DP group, a copy within that group remains), and the answer is closer to the switch being off; the calculator only approximates this mode itself (copies of the attention weights on every card and exchange between cards are not accounted for). Offload works this way by default for models with an indexer and for hybrids (DeepSeek-V3.2/V4, GLM-5.x): each card offloads and loads its own copy — TP copies in the RAM pool, one copy over each card’s bus. For PURE MLA without an indexer (a single cache group: DeepSeek-V3/R1, Kimi-K2) vLLM keeps ONE copy in RAM by default (replicated_layout) — with the switch on, the calculator will overstate the RAM pool for them by a factor of TP. For DeepSeek-V3.2 and GLM-5.2 a single copy is produced by the connector option canonical_layout: true; the calculator does not model it. For ordinary GQA attention it is off: heads are split across cards. The same copying happens with GQA when TP exceeds the number of KV heads (Qwen3-235B has 4 of them, at TP=8 each head is stored twice) — the switch does not describe this case, enter the cache with a manual correction. Model presets set the switch themselves.</span>
+            </label>
+            <input type="checkbox" id="kvRep" class="w-5 h-5 accent-emerald-600 cursor-pointer">
+        `;
+        container.appendChild(kvRepToggle);
+        document.getElementById('kvRep').addEventListener('change', (e) => {
+            hashRejected = 0; hashMissing = 0;
+            state.kvRep = e.target.checked;
+            calculate();
+        });
+
+        const toggle = document.createElement('div');
+        toggle.className = 'flex items-center justify-between bg-slate-100 rounded-lg px-3 py-2.5';
+        toggle.innerHTML = `
+            <label for="offloadOn" class="text-sm font-medium text-slate-700 flex items-center cursor-pointer tooltip relative">
+                KV cache offload to RAM
+                <svg class="w-4 h-4 ml-1 text-slate-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                <span class="tooltip-text invisible opacity-0 absolute left-0 bottom-6 z-20 w-72 p-2 bg-slate-800 text-white text-xs rounded shadow-lg transition-opacity duration-200 font-normal">vLLM OffloadingConnector (--kv-transfer-config, kv_role: kv_both). On — sessions move out to RAM while tools run, concurrency goes above M. Off — resident mode: N = M, RAM is not needed, PCIe is not loaded.</span>
+            </label>
+            <input type="checkbox" id="offloadOn" checked class="w-5 h-5 accent-emerald-600 cursor-pointer">
+        `;
+        container.appendChild(toggle);
+
+        const reserve = document.createElement('div');
+        reserve.className = 'flex items-center justify-between bg-slate-100 rounded-lg px-3 py-2.5';
+        reserve.innerHTML = `
+            <label for="reserveOn" class="text-sm font-medium text-slate-700 flex items-center cursor-pointer tooltip relative">
+                Failure reserve: +1 node
+                <svg class="w-4 h-4 ml-1 text-slate-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                <span class="tooltip-text invisible opacity-0 absolute left-0 bottom-6 z-20 w-72 p-2 bg-slate-800 text-white text-xs rounded shadow-lg transition-opacity duration-200 font-normal">A node failure hits twice: minus capacity AND a spike in cache misses — the node’s sessions lose their KV in both pools and come back through a full re-prefill. The checkbox adds one spare node to PROCUREMENT (the GPU header, total VRAM/RAM); the capacity calculation and the RAM ladder do not change.</span>
+            </label>
+            <input type="checkbox" id="reserveOn" checked class="w-5 h-5 accent-emerald-600 cursor-pointer">
+        `;
+        container.appendChild(reserve);
+        document.getElementById('reserveOn').addEventListener('change', (e) => {
+            hashRejected = 0; hashMissing = 0;
+            state.reserveOn = e.target.checked;
+            calculate();
+        });
+
+        renderParam('ramPool', container, true);
+        renderParam('ramHeadroom', container, true);
+
+        document.getElementById('offloadOn').addEventListener('change', (e) => {
+            hashRejected = 0; hashMissing = 0;
+            state.offloadOn = e.target.checked;
+            ['ramPool'].forEach(id => {
+                document.getElementById(`wrap-${id}`).style.opacity = state.offloadOn ? '1' : '0.35';
+                document.getElementById(`num-${id}`).disabled = !state.offloadOn;
+                document.getElementById(`rng-${id}`).disabled = !state.offloadOn;
+            });
+            calculate();
+        });
+
+        const fmtInt = x => Math.round(x).toLocaleString('en-US');
+        const fmt = (x, d) => x.toLocaleString('en-US', { minimumFractionDigits: d, maximumFractionDigits: d });
+        const fmtSec = x => x >= 100 ? fmtInt(x) + ' s' : fmt(x, x >= 10 ? 1 : 2) + ' s';
+
+        function setWarnings(list) {
+            list = pushHashWarn(list);
+            const box = document.getElementById('warnings');
+            box.innerHTML = '';
+            list.forEach(w => {
+                const d = document.createElement('div');
+                d.className = w.level === 'err'
+                    ? 'bg-red-50 border border-red-200 text-red-800 text-sm rounded-lg px-3 py-2'
+                    : 'bg-amber-50 border border-amber-200 text-amber-800 text-sm rounded-lg px-3 py-2';
+                d.innerText = w.text;
+                box.appendChild(d);
+            });
+        }
+
+        const GIB2GB = 1.073741824;
+
+        function pushHashWarn(list) {
+            if (hashRejected >= 0 && hashMissing) {
+                list.unshift({ level: 'warn', text: `Link from an earlier version of the calculator: it has none of the fields added later (${hashMissing}). Those were given their default values — the new mechanisms are off, and the calculation repeats that version. Turn them on by hand if the scenario needs to account for them.` });
+            }
+            if (hashRejected) {
+                list.unshift({ level: 'err', text: hashRejected < 0
+                    ? 'The scenario link is corrupted — the tab’s PREVIOUS scenario is shown (or the defaults on first load), and NOT what was in the link. Get the original link again: the address bar has already been overwritten with the current state.'
+                    : `Scenario link partially rejected: ${hashRejected} field${hashRejected === 1 ? '' : 's'} did not pass validation (out of range, unknown, or of the wrong type) and ${hashRejected === 1 ? 'was' : 'were'} replaced with the default value. The numbers below do NOT describe the scenario that was in the link.` });
+            }
+            return list;
+        }
+
+        function calculate() {
+            try { calcCore(); }
+            finally { saveHash(); refreshShare(); }
+        }
+
+        function calcCore() {
+            const s = state;
+            const warns = [];
+            lastResult = null;
+            const S = Math.max(1, s.taskSteps);
+
+            const uniqTok = s.ctxTokens - s.sharedTokens;
+            const grow = (S - 1) * (s.outTokens + s.toolTokens);
+            const uniqStart = Math.max(0, uniqTok - grow);
+            const uniqAvg = (uniqStart + uniqTok) / 2;
+            const ctxAvg = s.sharedTokens + uniqAvg;
+            const HR = Math.min(3, Math.max(1, s.ramHeadroom || 1.5));
+            const TP = Math.max(1, Math.round(s.tp));
+            const kvKiB = s.kvKiB * (s.kvRep ? TP : 1);
+            const stGiB = (s.stateMiB || 0) / 1024;
+            const kvCacheGiB = uniqAvg * kvKiB * 1024 / (1024 ** 3);
+            const stMemGiB = Math.max(stGiB, (s.stateAllocMiB || 0) / 1024);
+            const kvGiB = kvCacheGiB + stMemGiB;
+            const HRm = stMemGiB > 0 ? (kvCacheGiB * HR + stMemGiB) / kvGiB : HR;
+            const kvPeakGiB = uniqTok * kvKiB * 1024 / (1024 ** 3) + stMemGiB;
+            const kvGB = (kvCacheGiB + stGiB) * GIB2GB;
+            const kvSharedGiB = s.sharedTokens * kvKiB * 1024 / (1024 ** 3);
+
+            if (uniqTok < 1) {
+                setWarnings([{ level: 'err', text: `Shared prefix (${fmtInt(s.sharedTokens)}) ≥ full context (${fmtInt(s.ctxTokens)}): no unique part is left. The prefix is part of the context, not an addition to it.` }]);
+                ['res-kv','res-slots','res-tok','res-slot-time','res-swapin','res-pcie-util','res-ratio','res-recompute','res-pref-ceil','res-life-vram','res-life-ram','res-agents-gpu','res-ram-gpu','res-gpus','res-nodes','res-vram-total','res-ram-total','res-cluster-tps','res-steps-day','cmp-gpu','cmp-ram','cmp-miss'].forEach(id => document.getElementById(id).innerText = '—');
+                ['res-cluster-note','res-alt','res-agents-note','res-ram-note','cmp-foot-dyn','res-ram-ladder','cmp-ram-label','res-pref-split','res-ctx-profile'].forEach(id => document.getElementById(id).innerText = '');
+                const badge0 = document.getElementById('mode-badge');
+                badge0.innerText = '—';
+                badge0.className = 'text-xs font-medium px-2 py-1 rounded bg-slate-200 text-slate-500';
+                return;
+            }
+
+            const frac = Math.min(1, Math.max(0.02, s.attnFrac));
+            const K = Math.max(1, Math.round(s.prefixKinds || 1));
+            const kvSharedTot = K * kvSharedGiB;
+            const NODE = Math.max(1, Math.round(s.nodeSize));
+            const perNode = Math.floor(NODE / TP);
+            const perNodeSafe = Math.max(1, perNode);
+            const flopsMat = 2 * (s.actParams || 0) * 1e9;
+            const fMain = s.topK > 0 ? Math.min(1, s.topK / ctxAvg) : frac;
+            const fPref = fMain * (2 - fMain);
+            const attnBase = 2 * (s.attnLayers || 0) * (s.dQ || 0) * ctxAvg;
+            const MFU = s.moeMode ? 0.25 : 0.45;
+            const idxBase = (s.idxWidth || 0) * ctxAvg * TP * MFU / 0.45;
+            const flopsScratch = flopsMat + attnBase * fPref + idxBase;
+            const flopsDelta = flopsMat + 2 * attnBase * fMain + 2 * idxBase;
+            const flopsTok = flopsScratch;
+            const flopsAttn = attnBase * fPref + idxBase;
+            const prefDerived = flopsTok > 0 ? (s.peakTflops || 0) * 1e12 * MFU / flopsTok : 0;
+            const prefManual = s.prefTps > 0;
+            const prefCard = prefManual ? s.prefTps : prefDerived;
+            const attnShare = flopsTok > 0 ? flopsAttn / flopsTok : 0;
+            const prefRepl = prefCard * TP;
+            const computeCap = prefManual ? s.prefTps * TP * flopsScratch : (s.peakTflops || 0) * 1e12 * MFU * TP;
+
+            if (TP > NODE) {
+                setWarnings([{ level: 'err', text: `TP=${TP} is larger than the NVLink domain (${NODE} cards): 2 allreduce per layer per token would go over the inter-node network (~50 GB/s and 50–100 µs versus ~900 GB/s and ~15 µs for NVSwitch) — decode loses 30–50%, per-card efficiency drops by ~half. Calculation stopped. If the model does not fit in a node: TP=${NODE} × pipeline parallel between nodes (or EP for MoE); otherwise scale out with replicas via sticky balancing.` }]);
+                const badge0 = document.getElementById('mode-badge');
+                badge0.innerText = 'outside the model (TP > domain)';
+                badge0.className = 'text-xs font-medium px-2 py-1 rounded bg-red-100 text-red-800';
+                ['res-kv','res-slots','res-tok','res-slot-time','res-swapin','res-pcie-util','res-ratio','res-recompute','res-pref-ceil','res-life-vram','res-life-ram','res-agents-gpu','res-ram-gpu','res-gpus','res-nodes','res-vram-total','res-ram-total','res-cluster-tps','res-steps-day','cmp-gpu','cmp-ram','cmp-miss'].forEach(id => document.getElementById(id).innerText = '—');
+                ['res-cluster-note','res-alt','res-agents-note','res-ram-note','cmp-foot-dyn','res-ram-ladder','cmp-ram-label','res-pref-split','res-ctx-profile'].forEach(id => document.getElementById(id).innerText = '');
+                return;
+            }
+
+            const usable = s.vram * TP - s.weights - kvSharedTot;
+            const mMem = usable > 0 ? Math.floor(usable / (kvGiB * HRm)) : 0;
+            const mtp = Math.max(1, s.mtpMult || 1);
+            const miss = Math.min(1, Math.max(0, (s.missPct || 0) / 100));
+            const rho = Math.min(1, Math.max(0.3, (s.utilPct || 100) / 100));
+
+            document.getElementById('res-kv').innerText = fmt(kvGiB, 2) + ' GiB';
+            document.getElementById('res-ctx-profile').innerText = `average ~${fmtInt(ctxAvg)} tok. (this is what’s in memory); task start ~${fmtInt(s.sharedTokens + uniqStart)}, peak ${fmtInt(s.ctxTokens)}`;
+            document.getElementById('res-slots').innerText = fmtInt(mMem);
+
+            if (mMem < 1) {
+                const errText = `The replica does not fit even one session: ${fmt(Math.max(usable, 0), 1)} GiB free (${TP}×VRAM − weights ${fmtInt(s.weights)} − prefixes ${fmt(kvSharedTot, 1)}), while the session’s unique KV with headroom ×${fmt(HR, 2)} is ${fmt(kvGiB * HRm, 2)} GiB. Maximum weights at the current TP, context and headroom: ${fmt(s.vram * TP - kvSharedTot - kvGiB * HRm, 1)} GiB. If the model is bigger — raise Tensor Parallel: weights and KV are split across cards.`;
+                setWarnings([{ level: 'err', text: errText }]);
+                ['res-tok','res-slot-time','res-swapin','res-pcie-util','res-ratio','res-recompute','res-pref-ceil','res-life-vram','res-life-ram','res-agents-gpu','res-ram-gpu','res-gpus','res-nodes','res-vram-total','res-ram-total','res-cluster-tps','res-steps-day','cmp-gpu','cmp-ram','cmp-miss'].forEach(id => document.getElementById(id).innerText = '—');
+                ['res-cluster-note','res-alt','res-agents-note','res-ram-note','cmp-foot-dyn','res-ram-ladder','cmp-ram-label','res-pref-split','res-ctx-profile'].forEach(id => document.getElementById(id).innerText = '');
+                const badge0 = document.getElementById('mode-badge');
+                badge0.innerText = '—';
+                badge0.className = 'text-xs font-medium px-2 py-1 rounded bg-slate-200 text-slate-500';
+                return;
+            }
+
+            if (!s.stepsMode && !(s.slaTok > 0)) {
+                setWarnings([{ level: 'err', text: 'The task is degenerate: the target is set in live agents, but the step latency budget is not set. “300 live agents” is equally satisfied by fast hardware and by slow hardware — where those same 300 agents just barely crawl — so the sheet will start recommending SLOW cards as cheaper (by memory bandwidth the inversion reaches +80% more cards). Zero in the SLA field disables the batch cutoff ONLY when the target is in steps/day — there the budget is set by the target itself. Here, either set an SLA on generation speed or switch the target to steps/day. Calculation stopped: printing a number that gets cheaper as the hardware gets worse is not acceptable.' }]);
+                ['res-kv','res-slots','res-tok','res-slot-time','res-swapin','res-pcie-util','res-ratio','res-recompute','res-pref-ceil','res-life-vram','res-life-ram','res-agents-gpu','res-ram-gpu','res-gpus','res-nodes','res-vram-total','res-ram-total','res-cluster-tps','res-steps-day','cmp-gpu','cmp-ram','cmp-miss'].forEach(id => document.getElementById(id).innerText = '—');
+                ['res-cluster-note','res-alt','res-agents-note','res-ram-note','cmp-foot-dyn','res-ram-ladder','cmp-ram-label','res-pref-split','res-ctx-profile'].forEach(id => document.getElementById(id).innerText = '');
+                const badgeGoal = document.getElementById('mode-badge');
+                badgeGoal.innerText = '—';
+                badgeGoal.className = 'text-xs font-medium px-2 py-1 rounded bg-slate-200 text-slate-500';
+                return;
+            }
+            const deltaTok = s.toolTokens + (stGiB > 0 ? s.outTokens : 0);
+            const tPref = computeCap > 0 ? deltaTok * flopsDelta / computeCap : 0;
+            const tStart = computeCap > 0 ? (uniqStart / S) * flopsScratch / computeCap : 0;
+            const deltaGB = (s.outTokens + s.toolTokens) * kvKiB * 1024 / 1e9;
+            const startGB = (uniqStart * kvKiB * 1024 / 1e9) / S;
+            const prefTokStep = deltaTok + uniqStart / S + miss * uniqAvg;
+            const scratchTokStep = uniqStart / S + miss * uniqAvg;
+            const flopsStep = scratchTokStep * flopsScratch + deltaTok * flopsDelta;
+            const matStep = (scratchTokStep + deltaTok) * flopsMat;
+            const attnStep = scratchTokStep * (attnBase * fPref + idxBase) + deltaTok * (2 * attnBase * fMain + 2 * idxBase);
+            const pcieAgg = s.pcie * TP;
+            const tIn = kvGB / pcieAgg;
+            const pcieStepGB = kvGB + deltaGB + startGB + stGiB * GIB2GB;
+            const poolRepl = s.ramPool / perNodeSafe;
+            const ramForUniq = Math.max(0, poolRepl - kvSharedTot);
+            const nRamReal = ramForUniq / (kvGiB * HRm);
+
+            const recompute = computeCap > 0 ? (uniqAvg * flopsScratch + deltaTok * flopsDelta) / computeCap : 0;
+
+            const solve = (poolCap, offloadMode) => {
+                const evalAt = (b, X) => {
+                    const tRead = (s.weights + (kvSharedGiB + kvCacheGiB) * b * frac + 2 * stGiB * b) * GIB2GB / (TP * s.hbm);
+                    const uMat = computeCap > 0 ? X * matStep / computeCap : 0;
+                    const uAttn = computeCap > 0 ? X * attnStep / computeCap : 0;
+                    const tMatDec = computeCap > 0 ? b * mtp * flopsMat / computeCap : 0;
+                    const denomA = Math.max(0.02, 1 - uAttn);
+                    const denomB = Math.max(0.02, 1 - uMat - uAttn);
+                    const u = Math.min(0.98, uMat + uAttn);
+                    const tTok = Math.max(tRead / denomA, tMatDec / denomB);
+                    const matBinds = tMatDec / denomB > tRead / denomA;
+                    const tGen = s.outTokens * tTok / mtp;
+                    let Mu = mMem;
+                    if (s.slaTok > 0) {
+                        const bRead = (denomA * mtp * TP * s.hbm / s.slaTok / GIB2GB - s.weights) / Math.max(1e-9, (kvSharedGiB + kvCacheGiB) * frac + 2 * stGiB);
+                        const bMat = flopsMat > 0 ? denomB * computeCap / (s.slaTok * flopsMat) : Infinity;
+                        Mu = Math.max(0, Math.min(mMem, bRead, bMat));
+                    }
+                    const tSlotOff = miss * (recompute + tGen) + (1 - miss) * (tPref + tGen) + tStart;
+                    const tSlotOn = miss * (recompute + tGen) + (1 - miss) * (tIn + tPref + tGen) + tStart;
+                    const Toff = tSlotOff + s.waitTime;
+                    const Ton = tSlotOn + s.waitTime;
+                    const xFlow = flopsStep > 0 ? computeCap * rho / flopsStep : Infinity;
+                    const xPrefOn = xFlow;
+                    const mnbtNeed = b * mtp + tTok * xFlow * prefTokStep;
+                    const nCapOff = Math.max(1e-9, Math.min(mMem, xFlow * Toff, (Mu / tGen) * Toff));
+                    const xSlotOn = Math.min(mMem / tSlotOn, Mu / tGen);
+                    const xPcieOn = pcieAgg * rho / pcieStepGB;
+                    const Xon = Math.min(xSlotOn, xPcieOn, xFlow);
+                    const nCapOn = Math.max(nCapOff, Math.min(Xon * Ton, poolCap));
+                    return { tRead, tTok, tGen, tSlotOff, tSlotOn, Toff, Ton, nCapOff, nCapOn, xSlotOn, xPcieOn, xPrefOn, mnbtNeed, Xon, u, Mu, matBinds, tMatDec };
+                };
+                const inner = (X) => {
+                    let b = Math.max(1, mMem), e = evalAt(b, X);
+                    for (let i = 0; i < 200; i++) {
+                        const cap = offloadMode ? e.nCapOn : e.nCapOff;
+                        const cyc = offloadMode ? e.Ton : e.Toff;
+                        const bNew = Math.min(mMem, Math.max(1e-6, (cap / cyc) * e.tGen));
+                        if (Math.abs(bNew - b) <= 1e-12 * Math.max(1, b)) break;
+                        b = 0.5 * b + 0.5 * bNew;
+                        e = evalAt(b, X);
+                    }
+                    const cap = offloadMode ? e.nCapOn : e.nCapOff;
+                    const cyc = offloadMode ? e.Ton : e.Toff;
+                    return Object.assign({ bDec: b, Xach: cap / cyc }, e);
+                };
+                const xHi = Math.max(1e-9, flopsStep > 0 ? computeCap * rho / flopsStep : 1e6);
+                let lo = 0, hi = xHi, converged = true;
+                const Fh = inner(hi);
+                if (Fh.Xach >= hi) { lo = hi; }
+                else { for (let i = 0; i < 90; i++) { const m = (lo + hi) / 2; if (inner(m).Xach >= m) lo = m; else hi = m; } }
+                const e = inner(lo);
+                return Object.assign({ uOcc: Math.min(0.98, computeCap > 0 ? e.Xach * (matStep + attnStep) / computeCap : 0),
+                    uAttnOcc: Math.min(0.98, computeCap > 0 ? e.Xach * attnStep / computeCap : 0), converged }, e);
+            };
+
+            const on = s.offloadOn;
+            const main = solve(nRamReal, on);
+            const flowOnly = solve(Infinity, on);
+            const altOff = on ? solve(nRamReal, false) : main;
+            const altOn = on ? main : solve(nRamReal, true);
+
+            const { tTok, tGen, tSlotOff, tSlotOn, Toff, Ton, nCapOff, nCapOn, xSlotOn, xPcieOn, xPrefOn, mnbtNeed, Xon, bDec, uOcc, uAttnOcc, tRead, Mu, matBinds, tMatDec } = main;
+            const tokPerSes = mtp / tTok;
+            const passStretched = tTok > tRead * 1.02;
+            const passWhy = !matBinds
+                ? `prefill attention is added to the pass (${fmt(100 * uAttnOcc, 0)}%), while its matrix part rides the same multiplication as the generation positions, and as long as the pass is bound by the weight read, it costs zero`
+                : (tMatDec > tRead
+                    ? `the pass length is set by decoding’s own compute — batch ${fmtInt(bDec)} has gone past the knee, the card computes it longer than it reads memory per pass, and this compute is stretched by the entire prefill occupancy: both attention and the matrix part`
+                    : `the compute of batch ${fmtInt(bDec)} is by itself shorter than the memory read per pass, but it shares the multiplication with the matrix part of prefill — together they stop hiding under the read, and the pass length is set by the batch compute, stretched by the entire prefill occupancy: both attention and the matrix part`);
+            const passCure = !matBinds
+                ? 'by lowering the allowed utilization or by splitting prefill and generation across different replicas'
+                : (tMatDec > tRead
+                    ? 'by cutting the batch (set an SLA), and second by lowering the allowed utilization'
+                    : 'by lowering the allowed utilization — here this is the main lever; cutting the batch via SLA gives less');
+            const nCap = on ? nCapOn : nCapOff;
+            const nFlow = Math.floor(flowOnly.nCapOn);
+            const nRam = Math.floor(nRamReal);
+            const Noff = Math.floor(altOff.nCapOff);
+            const Non = Math.floor(altOn.nCapOn);
+            const ramNeedOn = Math.max(1, Non) * kvGiB * HRm + kvSharedTot;
+
+            const xRec = Math.min(rho / Math.max(1e-9, recompute), Mu / (recompute + tGen));
+            const cycleRec = recompute + tGen + s.waitTime;
+            const nRec = Math.floor(xRec * cycleRec);
+
+            const N = Math.floor(nCap);
+            if (N < 1) {
+                const slaKills = s.slaTok > 0 && Mu < 1;
+                setWarnings([{ level: 'err', text: slaKills
+                  ? (passStretched
+                    ? `SLA ${fmtInt(s.slaTok)} tok/s is unreachable on this configuration. Pure weight and cache reads give a maximum of ${fmt(mtp / tRead, 1)} tok/s, but the compute is ${fmt(100 * uOcc, 0)}% occupied by prefill, and the pass comes out ${fmt(tTok / tRead, 2)} times longer — leaving ${fmt(tokPerSes, 1)} tok/s. Reason: ${passWhy}. Lower the allowed utilization (then prefill interferes less with generation), raise TP or the memory bandwidth, or relax the SLA.`
+                    : `SLA ${fmtInt(s.slaTok)} tok/s is unreachable on this configuration: even pure weight and cache reads give a maximum of ${fmt(mtp / tRead, 1)} tok/s. Prefill has nothing to do with it here — this is the ceiling of the card itself at the current batch. Raise TP or the memory bandwidth, take a card with faster memory, or relax the SLA.`)
+                  : `The replica cannot sustain even a single continuous session: capacity ${fmt(nCap, 3)} agent. Sizing at this point is meaningless — a single session already exceeds the replica’s ceiling (bound by: ${Xon === xPrefOn ? 'prefill' : (Xon === xPcieOn ? 'PCIe' : 'slots')}). Raise prefill speed or TP, cut cache misses, context length, or the tool result.` }]);
+                ['res-tok','res-slot-time','res-swapin','res-pcie-util','res-ratio','res-recompute','res-pref-ceil','res-life-vram','res-life-ram','res-agents-gpu','res-ram-gpu','res-gpus','res-nodes','res-vram-total','res-ram-total','res-cluster-tps','res-steps-day','cmp-gpu','cmp-ram','cmp-miss'].forEach(id => document.getElementById(id).innerText = '—');
+                ['res-cluster-note','res-alt','res-agents-note','res-ram-note','cmp-foot-dyn','res-ram-ladder','cmp-ram-label','res-pref-split','res-ctx-profile'].forEach(id => document.getElementById(id).innerText = '');
+                return;
+            }
+            const floorBinds = on && Math.min(Xon * Ton, nRamReal) < nCapOff;
+            const swaps = on && !floorBinds && N > mMem;
+            const T = swaps ? Ton : Toff;
+            const tSlot = swaps ? tSlotOn : tSlotOff;
+            const Xserv = N / T;
+
+            const N_mem = on ? Math.max(mMem, nRamReal) : mMem;
+            const xResid = Math.min(altOff.xPrefOn, mMem / altOff.tSlotOff, altOff.Mu / altOff.tGen);
+            const X_max = (on && swaps) ? flowOnly.Xach : xResid;
+            const tGenBudget = s.slaTok > 0 ? s.outTokens / s.slaTok : null;
+            const T_budget = tGenBudget === null ? T
+                : (miss * (recompute + tGenBudget) + (1 - miss) * ((swaps ? tIn : 0) + tPref + tGenBudget) + tStart + s.waitTime);
+            let TGT, demandSteps, goalNote;
+            if (s.stepsMode) {
+                demandSteps = Math.max(1e-9, s.targetSteps / 86400);
+                TGT = demandSteps * T;
+                goalNote = 'goal in steps/day';
+            } else {
+                TGT = s.targetAgents;
+                demandSteps = TGT / T_budget;
+                goalNote = tGenBudget === null ? 'goal in agents, WITHOUT a latency budget' : 'goal in agents under SLA';
+            }
+            const ramNeed = on ? ramNeedOn : 0;
+            const poolStarved = on && nRamReal < nCapOff;
+            const pcieUtil = on ? Math.min(100, 100 * Xserv * (swaps ? pcieStepGB : (deltaGB + startGB)) / pcieAgg) : 0;
+
+            const reserveAdd = s.reserveOn && perNode >= 1 ? 1 : 0;
+            const replFor = (nmem, xmax) => Math.max(1, Math.ceil(TGT / Math.max(1, Math.floor(nmem))), Math.ceil(demandSteps / Math.max(1e-9, xmax)));
+            const packNodes = (nmem, xmax) => (nmem >= 1 && perNode >= 1) ? Math.ceil(replFor(nmem, xmax) / perNode) + reserveAdd : null;
+            const packCards = (nmem, xmax) => { const nn = packNodes(nmem, xmax); return nn === null ? null : nn * NODE; };
+            const gpus = replFor(N_mem, X_max);
+            const bindMem = Math.ceil(TGT / Math.max(1, Math.floor(N_mem))) >= Math.ceil(demandSteps / Math.max(1e-9, X_max));
+            const nodesNeed = perNode >= 1 ? Math.ceil(gpus / perNode) : 0;
+            const nodes = nodesNeed + reserveAdd;
+            const physCards = nodes * NODE;
+            const idleCards = perNode >= 1 ? nodesNeed * NODE - gpus * TP : 0;
+
+            const missGB = miss * uniqAvg * kvKiB * 1024 / 1e9;
+            const inflowVram = Xserv * ((swaps ? kvGB : 0) + deltaGB + startGB + missGB);
+            const lifeVram = usable * GIB2GB / inflowVram;
+            const inflowRam = Xserv * (deltaGB + startGB + missGB + stMemGiB * GIB2GB);
+            const lifeRam = on ? ramForUniq * GIB2GB / inflowRam : null;
+
+            const bneck = (on && swaps)
+                ? (flowOnly.Xon === flowOnly.xSlotOn
+                    ? (flowOnly.Mu / flowOnly.tGen < mMem / flowOnly.tSlotOn ? 'SLA (batch cut)' : 'decode slots')
+                    : (flowOnly.Xon === flowOnly.xPcieOn ? 'PCIe' : 'prefill'))
+                : (xResid === altOff.xPrefOn
+                    ? 'prefill'
+                    : (mMem / altOff.tSlotOff <= altOff.Mu / altOff.tGen ? 'decode slots' : 'SLA (batch cut)'));
+            if (tokPerSes > 150 && TP > 1) {
+                warns.push({ level: 'warn', text: `Speed ${fmt(tokPerSes, 0)} tok/s per session — beyond plausibility: the model treats scaling across cards as IDEAL, i.e. it sums the bandwidth of ${fmtInt(TP)} cards and pays nothing for synchronization between them. In reality, two exchanges per layer per token cost more, the smaller the model and the larger TP. For a light model keep TP=1–2 and scale via replicas: that way is both faster and cheaper.` });
+            }
+            if (s.slaTok > 0 && tokPerSes < s.slaTok * 0.98) {
+                warns.push({ level: 'warn', text: passStretched
+                  ? `Achieved speed ${fmt(tokPerSes, 1)} tok/s is below the set SLA ${fmtInt(s.slaTok)}: at the current allowed utilization ${fmtInt(s.utilPct)}%, the pass is ${fmt(100 * uOcc, 0)}% occupied by prefill and comes out ${fmt(tTok / tRead, 2)} times longer than a pure memory read. Reason: ${passWhy}. Lower the allowed utilization, or accept this speed.`
+                  : `Achieved speed ${fmt(tokPerSes, 1)} tok/s is below the set SLA ${fmtInt(s.slaTok)}, and prefill has nothing to do with it here: the pass runs at the speed of a pure memory read, i.e. it has hit the card itself. Faster memory, a larger TP, or relaxing the SLA would help.` });
+            }
+            if (uOcc > 0.6) {
+                warns.push({ level: 'warn', text: passStretched
+                  ? `The compute is ${fmt(100 * uOcc, 0)}% occupied by prefill, and every model pass comes out ${fmt(tTok / tRead, 2)} times longer than a pure memory read. Reason: ${passWhy}. That’s exactly why the speed per session is ${fmt(tokPerSes, 1)} tok/s versus ${fmt(mtp / tRead, 1)} for a pure read. Cured ${passCure}.`
+                  : `The compute is ${fmt(100 * uOcc, 0)}% occupied by prefill with ${fmtInt(s.utilPct)}% allowed — there’s almost no headroom for a burst in flow. This doesn’t affect generation speed for now: the pass runs at the speed of a pure memory read (${fmt(tokPerSes, 1)} tok/s). But any growth in step flow will hit this ceiling before it hits memory.` });
+            }
+            if (kvPeakGiB > usable) {
+                warns.push({ level: 'err', text: `The longest session (peak ${fmtInt(s.ctxTokens)} tok. = ${fmt(kvPeakGiB, 1)} GiB) doesn’t fit into the replica pool (${fmt(usable, 1)} GiB) in full. The average context won’t help sizing here: there’s simply nothing to finish that task with. Raise TP, shorten the context, or quantize KV.` });
+            } else if (kvPeakGiB > usable * 0.5 && mMem >= 2) {
+                warns.push({ level: 'warn', text: `A single session at peak takes up ${fmt(100 * kvPeakGiB / usable, 0)}% of the replica pool — at this size the law of large numbers doesn’t work: the sum of several sessions NO longer concentrates around the mean, and task variance hits directly. Raise the memory headroom or size by the peak manually (enter the peak as the typical context).` });
+            }
+            if (uniqStart <= 0) {
+                warns.push({ level: 'warn', text: `Growth per task (${fmtInt(grow)} tok. = ${fmtInt(S - 1)} steps × ${fmtInt(s.outTokens + s.toolTokens)}) exceeds the stated context peak — meaning the starting prompt comes out at zero. Either the peak is understated, or the task length is overstated, or the harness trims the context as it goes (in which case the peak is the truncation threshold, and the model’s math is correct, but the starting prefill is understated).` });
+            }
+            if (prefManual && flopsTok > 0) {
+                const hwCeil = (s.peakTflops || 0) * 1e12 * 0.75 / flopsTok;
+                const impliedMfu = s.prefTps * flopsTok / Math.max(1, (s.peakTflops || 0) * 1e12);
+                if (s.prefTps > hwCeil) {
+                    warns.push({ level: 'err', text: `The measurement ${fmtInt(s.prefTps)} tok/s exceeds the chip’s capability: it implies MFU ${fmt(impliedMfu, 2)} against a ceiling of about 0.72 for the best measured FP8 multiply. At the average context of ${fmtInt(ctxAvg)} tok., the work per token is ${fmt(flopsTok / 1e9, 1)} GFLOP, of which attention is ${fmt(100 * attnShare, 0)}%. Check at what length the measurement was taken, and whether it counted prefix-cache hits as processed tokens.` });
+                } else if (prefDerived > 0 && s.prefTps > prefDerived * 1.15) {
+                    warns.push({ level: 'warn', text: `The measurement ${fmtInt(s.prefTps)} tok/s is above the estimate (${fmtInt(prefDerived)}) — it implies MFU ${fmt(impliedMfu, 2)} versus the ${fmt(MFU, 2)} assumed for this model class. The discrepancy isn’t an error — your stack simply squeezes out more than typical; the computed ceiling is conservative for OTHER context lengths in this case.` });
+                }
+            }
+            if (!prefManual && attnShare > 0.5 && (idxBase > 0 || s.topK > 0)) {
+                warns.push({ level: 'warn', text: `Attention and the indexer eat up ${fmt(100 * attnShare, 0)}% of the token’s work at prefill (the indexer — ${fmt(100 * idxBase / flopsScratch, 0)}%), and the prefill ceiling has dropped to ${fmtInt(prefDerived)} tok/s. The selection budget already limits the main attention, the “KV fraction” field has no effect on prefill. A smaller TP would help (the indexer is computed on every card), as would a data-parallel-attention layout (DP-attention; the calculator does not account for it yet) or shortening the context.` });
+            } else if (!prefManual && attnShare > 0.5) {
+                warns.push({ level: 'warn', text: `Attention eats up ${fmt(100 * attnShare, 0)}% of the token’s work during prefill — a context of ${fmtInt(s.ctxTokens)} is long for this architecture, and the prefill ceiling has dropped to ${fmtInt(prefDerived)} tok/s. Sparse attention (the “KV fraction” field), a hybrid architecture with fewer full layers, or shortening the context would help.` });
+            }
+            if (![1, 2, 4, 8, 16, 32, 36, 72, 144].includes(NODE)) {
+                warns.push({ level: 'warn', text: `A domain of ${NODE} cards doesn’t match any production platform — NVLink domains are discrete: 1 (PCIe server without NVLink), 2 (a bridged pair), 4 (HGX 4-way, mesh), 8 (HGX 8-way with NVSwitch — the max for one server), 16/32/36/72/144 (rack-scale NVL). A server with ${NODE} PCIe cards WITHOUT NVLink is a domain of 1–2, not ${NODE}: TP over PCIe drops decode by multiples.` });
+            }
+            if (NODE % TP !== 0) {
+                warns.push({ level: 'warn', text: `TP=${TP} doesn’t divide the node (${NODE} cards): ${NODE - perNode * TP} sit idle on every node. Procurement goes by nodes — actually ${fmtInt(physCards)} cards instead of the ${fmtInt(gpus * TP)} in use.` });
+            }
+            if (mMem >= 1 && (s.weights + kvSharedTot) > 0.7 * s.vram * TP) {
+                if (TP + 1 <= NODE) {
+                    const poolNext = s.vram * (TP + 1) - s.weights - kvSharedTot;
+                    warns.push({ level: 'warn', text: `The replica is at the fit threshold: weights + prefixes take up ${fmt(100 * (s.weights + kvSharedTot) / (s.vram * TP), 0)}% of TP·VRAM, the pool is ${fmt(usable, 0)} GiB. At TP+1 the pool would become ${fmt(poolNext, 0)} GiB (×${fmt(poolNext / usable, 1)}): GPU(TP) is non-monotonic, check neighboring TP values.` });
+                } else {
+                    warns.push({ level: 'warn', text: `The replica is at the fit threshold: weights + prefixes take up ${fmt(100 * (s.weights + kvSharedTot) / (s.vram * TP), 0)}% of TP·VRAM, the pool is ${fmt(usable, 0)} GiB, and TP is already equal to the domain (${NODE}) — you can’t add a card to the replica. Only a platform with a larger domain (NVL16/36/72) or weight quantization will grow the pool.` });
+                }
+            }
+            if (s.slaTok > 0 && Mu < mMem) {
+                warns.push({ level: 'warn', text: `SLA ${fmtInt(s.slaTok)} tok/s limits the decoding batch: it’s cut to ${fmtInt(Math.floor(Mu))} out of ${fmtInt(mMem)} slots by the pass budget (reading weights and KV + compute occupied by prefill); in resident terms (including those waiting on tools), VRAM still fits up to ${fmtInt(mMem)}.` });
+            }
+            if (s.slaTok > 0) {
+                const slaEdge = (s.weights * GIB2GB / (TP * s.hbm)) / (mtp / s.slaTok);
+                if (slaEdge > 0.75 && slaEdge < 1) {
+                    warns.push({ level: 'warn', text: `Reading the weights takes up ${fmt(100 * slaEdge, 0)}% of the pass budget for the SLA of ${fmtInt(s.slaTok)} tok/s: the replica is at the SLA feasibility edge. In this zone the solver is unstable — the procurement changes in jumps for small changes in memory bandwidth or weights (a known solver defect): check neighboring bandwidth values (±5%), raise TP, or relax the SLA.` });
+                }
+            }
+            if (s.stateAllocMiB > 0 && mtp > 1) {
+                warns.push({ level: 'warn', text: `The state memory (${fmtInt(s.stateAllocMiB)} MiB per session) is set for vLLM without speculative decoding, while the MTP multiplier is ${fmt(mtp, 1)}: every draft token adds one pool block per group of linear layers, and the draft layer adds its own cache. For GLM-5.3-Flash (FP8 cache, TP 2–4) this is ≈543 MiB at 1 draft token and 894–920 at 3 — substitute the value for your number of draft tokens, otherwise session memory is understated.` });
+            }
+            if (TP > 1 && idxBase > 0 && idxBase / flopsScratch > 0.25) {
+                warns.push({ level: 'warn', text: `The indexer takes up ${fmt(100 * idxBase / flopsScratch, 0)}% of the prefill token’s work: vLLM computes it in full on each of the ${TP} replica cards, without splitting across TP, and raising TP does not speed it up. A data-parallel-attention layout (DP-attention) removes this multiplication — the calculator does not account for it yet; compare against a smaller TP.` });
+            }
+            if (s.moeMode && bDec < 32) {
+                warns.push({ level: 'warn', text: `The decode batch is only ~${fmtInt(bDec)} (< 32): the model conservatively reads the FULL MoE weights, even though a small batch touches only a fraction of the experts — the real speed per session is higher than computed, and procurement based on the decode ceiling is overstated (see the hint on the “Model weights” field).` });
+            }
+            if (on && ramForUniq < Math.max(1, Noff) * kvGiB * HRm) {
+                warns.push({ level: 'warn', text: `The replica pool (${fmt(poolRepl, 0)} GiB = ${fmtInt(s.ramPool)} per node ÷ ${perNodeSafe} replicas) is smaller than the working set even for ${fmtInt(Noff)} resident sessions (${fmt(Noff * kvGiB * HRm + kvSharedTot, 0)} GiB with prefixes and headroom ×${fmt(HR, 2)}) — offload gives no gain: N is held at the resident capacity (${fmtInt(Noff)}), and turning offload on only churns the bus to no effect. For the full pipeline (${fmtInt(nFlow)} agents/replica) the node needs a pool of ~${fmt((nFlow * kvGiB * HRm + kvSharedTot) * perNodeSafe, 0)} GiB; otherwise turn the checkbox off — the numbers will match.` });
+            } else if (on && nRam < nFlow) {
+                warns.push({ level: 'warn', text: `The RAM pool limits concurrency: the pipeline allows ${fmtInt(nFlow)} agents, the pool holds the working set for only ${fmtInt(nRam)}. Raise node RAM to ~${fmt((nFlow * kvGiB * HRm + kvSharedTot) * perNodeSafe, 0)} GiB (${fmt(nFlow * kvGiB * HRm + kvSharedTot, 0)} GiB per replica — that is cpu_bytes_to_use).` });
+            }
+            if (s.slaTok === 0 && tokPerSes < 10) {
+                warns.push({ level: 'warn', text: `Speed per session has sagged to ${fmt(tokPerSes, 1)} tok/s (step ${fmt(tGen, 1)} s): memory fit a huge batch, but the vLLM scheduler may not let it through (max_num_seqs), and agent cycles will run into minutes. Set an SLA to cut the batch deliberately.` });
+            }
+            if (on && swaps && Xon === xPcieOn && xPcieOn < xSlotOn) {
+                warns.push({ level: 'warn', text: `Bottleneck — PCIe (${fmt(pcieUtil, 0)}%): the bus limits steps/sec before VRAM slots do. Gen5, a smaller context, or FP8-KV would help.` });
+            }
+            if (Xon === xPrefOn && xPrefOn < xSlotOn) {
+                warns.push({ level: 'warn', text: 'Bottleneck — prefill-compute: the token flow (tool results + task starting prefills + miss re-prefill) hits the card’s prefill ceiling before it hits VRAM slots.' });
+            }
+            if (isFinite(xPrefOn) && xPrefOn / xSlotOn > 0.8 && xPrefOn / xSlotOn < 1.25) {
+                warns.push({ level: 'warn', text: `The prefill ceiling (${fmt(xPrefOn, 1)} steps/s) and the slot ceiling (${fmt(xSlotOn, 1)} steps/s) are within ±25% of each other — the answer is balanced on the knife-edge of prefill speed. The computed ceiling is conservative, but it doesn’t replace a measurement: run vllm bench serve at the target context length and plug the result into the “Measured prefill” field.` });
+            }
+            if (Xserv * flopsStep > 0.95 * rho * computeCap) {
+                warns.push({ level: 'warn', text: `Prefill-compute is at the limit: the step flow occupies ${fmt(100 * Xserv * flopsStep / computeCap, 0)}% of compute against the permitted ${fmtInt(s.utilPct)}%. Task starting prefills, tool deltas, and miss re-prefill eat up the card’s compute.` });
+            }
+            if (nFlow < mMem) {
+                warns.push({ level: 'warn', text: `The flow doesn’t feed even the resident set: the pipeline gives ${fmtInt(nFlow)} agents at ${fmtInt(mMem)} slots — memory is underused, the free VRAM will go to the blocks of those waiting. Bound by: ${bneck}${prefManual ? `; a MANUAL prefill measurement of ${fmtInt(s.prefTps)} tok/s is in effect (this model’s computed ceiling — ${fmtInt(prefDerived)})` : ''}. Memory being larger than compute is normal for a light KV: only a longer cycle (long tools) or a cheap step can fill the slots — not prefill speed alone.` });
+            }
+            if (N <= 2 && mMem > 4) {
+                warns.push({ level: 'err', text: `Replica capacity has collapsed to ${fmtInt(N)} agents at ${fmtInt(mMem)} memory slots — procurement (${fmtInt(physCards)} cards) is determined not by memory but by the “${bneck}” ceiling. Check the prefill speed, the miss fraction, and the context length: in this mode the card count is extremely sensitive to these three inputs.` });
+            }
+            setWarnings(warns);
+
+            const badge = document.getElementById('mode-badge');
+            badge.innerText = on ? 'offload enabled' : 'resident mode';
+            badge.className = 'text-xs font-medium px-2 py-1 rounded ' + (on ? 'bg-emerald-100 text-emerald-800' : 'bg-slate-200 text-slate-700');
+
+            document.getElementById('res-tok').innerText = fmt(tokPerSes, 1) + ' tok/s';
+            document.getElementById('res-slot-time').innerText = fmt(tSlot, 2) + ' s';
+            document.getElementById('res-swapin').innerText = swaps ? fmt(tIn * 1000, 0) + ' ms' : '—';
+            document.getElementById('res-pcie-util').innerText = fmt(pcieUtil, 0) + ' %';
+            document.getElementById('res-ratio').innerText = fmt(N / Math.max(1, mMem), 1) + '×';
+            document.getElementById('res-recompute').innerText = '+' + fmt(recompute, 2) + ' s/step';
+            document.getElementById('res-pref-ceil').innerText = fmtInt(prefCard) + ' tok/s';
+            document.getElementById('res-pref-split').innerText = prefManual
+                ? `measured; the computation would give ${fmtInt(prefDerived)}`
+                : `attention ${fmt(100 * attnShare, 0)}% of the token’s work${idxBase > 0 ? ` (of which the indexer is ${fmt(100 * idxBase / flopsScratch, 0)}%)` : ''} · MFU ${fmt(MFU, 2)} (${s.moeMode ? 'MoE' : 'dense'})`;
+            ['wrap-peakTflops', 'wrap-moeMode'].forEach(id => {
+                const w = document.getElementById(id);
+                if (w) w.style.opacity = prefManual ? '0.45' : '1';
+            });
+            document.getElementById('res-life-vram').innerText = fmtSec(lifeVram);
+            document.getElementById('res-life-ram').innerText = on ? (poolStarved ? 'evicted: pool < set' : fmtSec(lifeRam)) : '—';
+            document.getElementById('cmp-foot-dyn').innerText = on
+                ? (lifeVram > s.waitTime
+                    ? ` Right now the KV lifetime in VRAM (${fmtSec(lifeVram)}) is LONGER than the tool wait — GPU hits dominate (top row), a full swap-in remains headroom in the calculation.`
+                    : ` The KV lifetime in VRAM (${fmtSec(lifeVram)}) is shorter than the tool wait — blocks due for return have been evicted, the calculated case is the middle row.`)
+                : '';
+
+            document.getElementById('cmp-gpu').innerText = fmt(tPref, 2) + ' s';
+            document.getElementById('cmp-ram').innerText = on ? fmt(tIn + tPref, 2) + ' s' : '—';
+            document.getElementById('cmp-ram-label').innerText = on ? '(this is computed by the calculator)' : '(disabled)';
+            document.getElementById('cmp-miss').innerText = fmt(recompute, 2) + ' s';
+
+            document.getElementById('res-agents-gpu').innerText = fmtInt(N);
+            document.getElementById('res-agents-note').innerText = on
+                ? (floorBinds
+                    ? `floor: resident capacity (the RAM pool would give ${fmtInt(nRam)}, the pipeline — ${fmtInt(nFlow)})`
+                    : `limit: ${nRamReal < Xon * Ton ? 'RAM pool' : 'pipeline'} · pipeline ${fmtInt(nFlow)} · RAM pool ${fmtInt(nRam)} · slots M=${fmtInt(mMem)}`)
+                : (Noff < mMem ? `limited by prefill flow (slots M=${fmtInt(mMem)})` : 'limited by VRAM slots (M)');
+            document.getElementById('res-ram-gpu').innerText = on ? (poolStarved ? fmt(poolRepl, 0) + ' GiB (too small)' : fmt(ramNeed, 0) + ' GiB') : '0 GiB';
+            document.getElementById('res-ram-note').innerText = on
+                ? (poolStarved
+                    ? `pool ${fmt(poolRepl, 0)} GiB is smaller than the resident set ${fmt(Math.max(1, Noff) * kvGiB * HRm + kvSharedTot, 0)} GiB — offload runs idle, see the banner`
+                    : `node pool ${fmtInt(s.ramPool)} ÷ ${perNodeSafe} replicas = ${fmt(poolRepl, 0)} GiB · block lifetime ~${fmtSec(lifeRam)} at a ${fmt(T, 0)} s cycle`)
+                : 'RAM pool not used';
+
+            document.getElementById('res-gpus').innerText = perNode >= 1 ? fmtInt(physCards) : fmtInt(gpus * TP);
+            document.getElementById('res-nodes').innerText = perNode >= 1 ? fmtInt(nodes) : '—';
+            document.getElementById('res-vram-total').innerText = perNode >= 1
+                ? fmt(physCards * s.vram / 1024, 2) + ' TiB'
+                : fmt(gpus * TP * s.vram / 1024, 2) + ' TiB';
+            document.getElementById('res-ram-total').innerText = on ? (perNode >= 1 ? fmt(nodes * s.ramPool / 1024, 2) + ' TiB' : '—') : '0 GiB';
+            document.getElementById('res-cluster-tps').innerText = fmtInt(demandSteps * s.outTokens);
+            document.getElementById('res-steps-day').innerText = fmtInt(demandSteps * 86400);
+            const perRepl = Math.min(N_mem, Math.ceil(TGT / gpus));
+            const xRepl = Math.min(perRepl / T, X_max);
+            document.getElementById('res-cluster-note').innerText =
+                `${fmtInt(gpus)} replicas (TP=${TP}) — ${fmtInt(gpus * TP)} of ${fmtInt(perNode >= 1 ? physCards : gpus * TP)} procured cards in use${reserveAdd ? ' (procurement includes +1 reserve node)' : ''}; ${fmtInt(perRepl)} agents per replica (fits up to ${fmtInt(N_mem)}) (${goalNote}: ${s.stepsMode ? fmtInt(s.targetSteps) + ' steps/day ≈ ' + fmtInt(TGT) + ' live agents' : fmtInt(TGT) + ' agents ≈ ' + fmtInt(demandSteps * 86400) + ' steps/day'}). Binds: ${bindMem ? 'MEMORY (fits ' + fmtInt(N_mem) + ' agents per replica)' : 'THROUGHPUT (' + fmt(X_max, 2) + ' steps/s per replica against the required ' + fmt(demandSteps, 2) + ')'}. Headroom: +${fmtInt(gpus * N_mem - TGT)} agents by memory, +${fmt(100 * (gpus * X_max - demandSteps) / Math.max(1e-9, demandSteps), 0)}% by throughput. At the moment, on the occupied replica (${fmtInt(perRepl)} agents): ~${fmtInt(xRepl * tSlot)} on GPU (of which ~${fmtInt(xRepl * tGen)} in decode), ~${fmtInt(xRepl * s.waitTime)} waiting on tools (KV ${swaps ? 'in RAM' : 'in VRAM'}). Generation ${fmt(xRepl * s.outTokens, 0)} tok/s per replica, step latency ${fmt(tSlot, 1)} s + tool wait. Set --max-num-batched-tokens no lower than ${fmtInt(Math.ceil(mnbtNeed / 512) * 512)}: this many tokens must fit into a single pass, otherwise flow will hit the scheduler instead of compute.${perNode >= 1 ? ` Procurement by nodes of ${NODE}: ${fmtInt(nodes)} × node = ${fmtInt(physCards)} cards${idleCards > 0 ? ` (${fmtInt(idleCards)} idle)` : ''}.` : ''}`;
+            const cardsHere = packCards(N_mem, X_max);
+            const cardsOff = packCards(mMem, xResid);
+            let cardsOn = null;
+            if (!on) {
+                const altOnSwaps = Math.min(altOn.Xon * altOn.Ton, nRamReal) >= altOn.nCapOff && Math.floor(altOn.nCapOn) > mMem;
+                const altOnX = altOnSwaps ? solve(Infinity, true).Xach : xResid;
+                cardsOn = packCards(Math.max(mMem, nRamReal), altOnX);
+            }
+            const cardsRec = packCards(mMem, xRec);
+            const or = (v) => v === null ? 'doesn’t fit' : fmtInt(v) + ' cards';
+            document.getElementById('res-alt').innerText = on
+                ? `Without offload for the same goal: ${or(cardsOff)} (resident: up to ${fmtInt(mMem)} agents/replica by memory, flow ${fmt(xResid, 2)} steps/s) or ~${or(cardsRec)} in recompute mode — the same node packing as in the header. Offload savings ≈ ${cardsOff && cardsHere ? fmt(cardsOff / cardsHere, 2) + '×' : 'n/a'}; the pipeline ceiling at these inputs is ×${fmt(flowOnly.nCapOn / nCapOff, 1)} versus the resident one (bound by: ${bneck}), and grows with long tools and fast decode.`
+                : `With offload enabled: ${or(cardsOn)} and ${fmt(ramNeedOn, 0)} GiB RAM per replica (${fmtInt(Math.max(0, Non))} agents/replica). Recompute variant: ~${or(cardsRec)}.`;
+
+            let ladder = '';
+            if (on && perNode >= 1) {
+                const rMin = Math.max(1, Math.ceil(demandSteps / Math.max(1e-9, X_max)));
+                const capRepl = Math.max(1, Math.min(N_mem, Math.ceil(TGT / gpus)));
+                const lastFill = TGT - (gpus - 1) * capRepl;
+                const fillTxt = (bindMem && lastFill > 0)
+                    ? `The last replica is ${fmt(100 * lastFill / capRepl, 0)}% occupied (${fmtInt(lastFill)} of ${fmtInt(capRepl)}).`
+                    : `Replicas are under-occupied: procurement is held by flow, so agents are spread across all ${fmtInt(gpus)} — ${fmt(TGT / gpus, 1)} per replica against a capacity of ${fmtInt(Math.floor(N_mem))}.`;
+                if (gpus > rMin) {
+                    const steps = [];
+                    let prevNodes = nodes, blocked = null;
+                    for (let r2 = gpus - 1; r2 >= rMin && steps.length < 6; r2--) {
+                        const nodes2 = Math.ceil(r2 / perNode) + reserveAdd;
+                        if (nodes2 >= prevNodes) continue;
+                        const need = Math.ceil(TGT / r2);
+                        const poolNeedRepl = need * kvGiB * HRm + kvSharedTot;
+                        const e2 = solve(need, true);
+                        const sw2 = Math.min(e2.Xon * e2.Ton, need) >= e2.nCapOff && Math.floor(e2.nCapOn) > mMem;
+                        const x2 = sw2 ? flowOnly.Xach : xResid;
+                        if (Math.floor(e2.nCapOn) < need || demandSteps / r2 > x2) { blocked = { nodes2, need }; break; }
+                        steps.push(`${fmtInt(nodes2)} node(s) ← pool ≥${fmtInt(Math.ceil(poolNeedRepl * perNodeSafe))} GiB`);
+                        prevNodes = nodes2;
+                    }
+                    const shown = steps.length > 4 ? steps.slice(0, 2).concat(['…', steps[steps.length - 1]]) : steps;
+                    const limitTxt = blocked
+                        ? ` RAM won’t bring it any lower: for ${fmtInt(blocked.nodes2)} node(s) you need N≥${fmtInt(blocked.need)}, and the pipeline (${bneck}) doesn’t deliver that many at any memory size — ceiling ${fmtInt(nFlow)}.`
+                        : (rMin > 1 ? ` RAM won’t bring it any lower: the pipeline (${bneck}) is bound by ${fmtInt(nFlow)} agents per replica.` : '');
+                    ladder = steps.length
+                        ? `${fillTxt} RAM ladder (every rung recomputed by the model): ${shown.join(' · ')}.${limitTxt}`
+                        : `${fillTxt} Adding node RAM doesn’t shave off nodes:${limitTxt || ' the bound isn’t memory.'}`;
+                } else {
+                    const needRepl = Math.max(1, Math.ceil(TGT / Math.max(1, gpus)));
+                    const poolBind = (needRepl * kvGiB * HRm + kvSharedTot) * perNodeSafe;
+                    const knobTxt = poolBind < params.ramPool.min
+                        ? ` The pool would only start binding procurement below ${fmt(poolBind, 1)} GiB per node, and the field doesn’t go below ${fmtInt(params.ramPool.min)} — on this configuration the pool slider does not change the answer at ANY value.`
+                        : ` Below ${fmt(poolBind, 0)} GiB per node the replica capacity drops under ${fmtInt(needRepl)} — and procurement starts growing; above this threshold the pool size doesn’t affect the answer.`;
+                    ladder = `${fillTxt} ${N >= nFlow
+                        ? `Pool is saturated: N has hit the pipeline (${bneck}, ${fmtInt(nFlow)}) — adding RAM buys nothing.`
+                        : `Nodes are already at the minimum for this pipeline (${fmtInt(nodes)}): adding RAM raises the agent headroom, but won’t shave off a node.`}${knobTxt}`;
+                }
+            }
+            lastResult = { agents: TGT, replicas: gpus, tp: TP, node: NODE, perNode: perNode,
+                           cards: perNode >= 1 ? physCards : gpus * TP, nodes: perNode >= 1 ? nodes : 0,
+                           ramGiB: on && perNode >= 1 ? nodes * s.ramPool : 0, ramPool: on ? s.ramPool : 0,
+                           nPerRepl: N, reserve: reserveAdd };
+            document.getElementById('res-ram-ladder').innerText = ladder;
+        }
+
+        function saveHash() {
+            try {
+                const bytes = new TextEncoder().encode(JSON.stringify(state));
+                history.replaceState(null, '', '#s=' + btoa(String.fromCharCode(...bytes)));
+            } catch (e) {   }
+        }
+        let hashRejected = 0, hashMissing = 0;
+        function loadHash() {
+            hashRejected = 0; hashMissing = 0;
+            try {
+                if (!location.hash || !location.hash.startsWith('#s=')) return;
+                const bytes = Uint8Array.from(atob(location.hash.slice(3)), c => c.charCodeAt(0));
+                const v = JSON.parse(new TextDecoder().decode(bytes));
+                if (!v || typeof v !== 'object' || Array.isArray(v)) { hashRejected = -1; return; }
+                hashMissing = 0;
+                Object.keys(STATE_DEFAULTS).forEach(k => {
+                    if (!(k in v)) hashMissing++;
+                    state[k] = STATE_DEFAULTS[k];
+                    const num = document.getElementById('num-' + k), rng = document.getElementById('rng-' + k);
+                    if (num) num.value = STATE_DEFAULTS[k];
+                    if (rng) rng.value = STATE_DEFAULTS[k];
+                });
+                [['preset-model', 'preset-model-hint'], ['preset-load', 'preset-load-hint'], ['preset-platform', 'preset-platform-hint']].forEach(([sel, hint]) => {
+                    const s = document.getElementById(sel); if (s) s.value = '';
+                    const h = document.getElementById(hint); if (h) h.innerText = '';
+                });
+                checkPair();
+                let rejected = 0;
+                Object.keys(v).forEach(k => {
+                    if (!(k in state) || typeof v[k] !== typeof state[k]) { rejected++; return; }
+                    const pp = params[k];
+                    if (pp && (!isFinite(v[k]) || v[k] < pp.min || v[k] > pp.max)) { rejected++; return; }
+                    state[k] = v[k];
+                    const num = document.getElementById('num-' + k);
+                    const rng = document.getElementById('rng-' + k);
+                    if (num) num.value = v[k];
+                    if (rng) rng.value = v[k];
+                });
+                const off = document.getElementById('offloadOn'); if (off) off.checked = !!state.offloadOn;
+                const res = document.getElementById('reserveOn'); if (res) res.checked = !!state.reserveOn;
+                const moe = document.getElementById('moeMode'); if (moe) moe.checked = !!state.moeMode;
+                const kvr = document.getElementById('kvRep'); if (kvr) kvr.checked = !!state.kvRep;
+                const stp = document.getElementById('stepsMode'); if (stp) stp.checked = !!state.stepsMode;
+                ['ramPool'].forEach(id => {
+                    document.getElementById(`wrap-${id}`).style.opacity = state.offloadOn ? '1' : '0.35';
+                    document.getElementById(`num-${id}`).disabled = !state.offloadOn;
+                    document.getElementById(`rng-${id}`).disabled = !state.offloadOn;
+                });
+                const rh = document.getElementById('wrap-ramHeadroom');
+                if (rh) { rh.style.opacity = '1'; document.getElementById('num-ramHeadroom').disabled = false; document.getElementById('rng-ramHeadroom').disabled = false; }
+                syncGoalUI();
+                if (rejected) hashRejected = rejected;
+            } catch (e) { hashRejected = -1; }
+        }
+
+        let lastResult = null;
+
+        const basket = [];
+        function currentLabel() {
+            const m = document.getElementById('preset-model');
+            const l = document.getElementById('preset-load');
+            const mn = (m && m.value !== '') ? MODEL_PRESETS[+m.value].n.split(' —')[0] : 'manual model';
+            const ln = (l && l.value !== '') ? LOAD_PRESETS[+l.value].n : 'manual load';
+            const p = document.getElementById('preset-platform');
+            const pn = (p && p.value !== '') ? PLATFORM_PRESETS[+p.value].n.split(' —')[0] : 'manual platform';
+            return ln + ' · ' + mn + ' · ' + pn;
+        }
+        function renderBasket() {
+            const wrap = document.getElementById('basket-wrap');
+            const rows = document.getElementById('basket-rows');
+            const tot = document.getElementById('basket-total');
+            if (!basket.length) { wrap.classList.add('hidden'); return; }
+            wrap.classList.remove('hidden');
+            rows.innerHTML = basket.map((b, i) => `
+                <div class="flex justify-between gap-2 items-baseline">
+                    <span class="text-slate-600 truncate">${i + 1}. ${b.label} — ${fmtInt(b.agents)} agents</span>
+                    <span class="font-mono text-slate-800 shrink-0">${fmtInt(b.replicas)} replicas × TP${b.tp}</span>
+                </div>`).join('');
+            const sameNode = basket.every(b => b.node === basket[0].node && b.perNode === basket[0].perNode && b.ramPool === basket[0].ramPool);
+            const totalRepl = basket.reduce((a, b) => a + b.replicas, 0);
+            const totalAgents = basket.reduce((a, b) => a + b.agents, 0);
+            let cards, nodes, packNote;
+            if (sameNode && basket[0].perNode >= 1) {
+                nodes = Math.ceil(totalRepl / basket[0].perNode) + (basket.some(b => b.reserve) ? 1 : 0);
+                cards = nodes * basket[0].node;
+                packNote = 'replicas packed into nodes jointly';
+            } else {
+                nodes = basket.reduce((a, b) => a + b.nodes, 0);
+                cards = basket.reduce((a, b) => a + b.cards, 0);
+                packNote = 'class platforms differ — nodes summed row by row, joint packing is impossible';
+            }
+            const ram = (sameNode && basket[0].perNode >= 1) ? nodes * basket[0].ramPool : basket.reduce((a, b) => a + b.ramGiB, 0);
+            tot.innerText = `TOTAL: ${fmtInt(cards)} cards · ${fmtInt(nodes)} nodes · ${fmt(ram / 1024, 2)} TiB RAM · ${fmtInt(totalAgents)} agents (${packNote})`;
+        }
+        function addToBasket() {
+            if (!lastResult) { flashHint('Current scenario not calculated (input error) — not added to the estimate.', false); return; }
+            basket.push(Object.assign({ label: currentLabel(), hash: location.hash }, lastResult));
+            renderBasket();
+            flashHint('Class added to the estimate. Change the profile and model, add the next one.', true);
+        }
+
+        function shareString() {
+            try {
+                const base = (location.protocol === 'file:' || !location.origin) ? '' : (location.origin + (location.pathname || ''));
+                return base + (location.hash || '');
+            }
+            catch (e) { return location.hash || ''; }
+        }
+        function refreshShare() {
+            const box = document.getElementById('share-box');
+            if (box && document.activeElement !== box) box.value = shareString();
+        }
+        function flashHint(text, ok) {
+            const h = document.getElementById('share-hint');
+            if (!h) return;
+            h.innerText = text;
+            h.className = 'text-[11px] mt-1 ' + (ok ? 'text-emerald-700' : 'text-red-600');
+            setTimeout(() => {
+                h.innerText = 'The full current scenario always sits here — copy it to share or save into a task. Both a full link and a single line after the hash sign are accepted back.';
+                h.className = 'text-[11px] text-slate-500 mt-1';
+            }, 4000);
+        }
+        document.getElementById('share-copy').addEventListener('click', async () => {
+            const box = document.getElementById('share-box');
+            box.value = shareString();
+            box.select();
+            try { await navigator.clipboard.writeText(box.value); flashHint('Copied to clipboard.', true); }
+            catch (e) { flashHint('Clipboard unavailable — the line is selected, copy it manually (Cmd/Ctrl+C).', false); }
+        });
+        document.getElementById('share-apply').addEventListener('click', () => {
+            const raw = (document.getElementById('share-box').value || '').trim();
+            if (!raw) { flashHint('Field is empty: paste a link or a scenario line.', false); return; }
+            const i = raw.indexOf('#s=');
+            const payload = i >= 0 ? raw.slice(i + 3) : raw.replace(/^#?s=/, '');
+            location.hash = '#s=' + payload;
+            loadHash();
+            calculate();
+            flashHint(hashRejected ? 'Scenario applied partially — see the banner above.' : 'Scenario applied.', !hashRejected);
+        });
+
+        document.getElementById('basket-add').addEventListener('click', addToBasket);
+        document.getElementById('basket-clear').addEventListener('click', () => { basket.length = 0; renderBasket(); });
+
+        const STATE_DEFAULTS = JSON.parse(JSON.stringify(state));
+        loadHash();
+        calculate();
+        refreshShare();
+        window.addEventListener('hashchange', () => { loadHash(); calculate(); });
+</script>
+</body>
+</html>
